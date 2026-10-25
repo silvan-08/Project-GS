@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NJ EMI Store — Excel-Based IRR Calculator</title>
+<style>
+:root{font-family:Inter,Arial,Helvetica,sans-serif;color:#18243b;background:#edf3fb}
+*{box-sizing:border-box}body{margin:0}main{max-width:1150px;margin:auto;padding:15px}
+header{background:linear-gradient(125deg,#172554 0%,#244db5 55%,#087e8b 100%);color:white;padding:24px;border-radius:18px;box-shadow:0 12px 30px rgba(36,77,181,.22)}
+h1{font-size:24px;margin:0 0 6px}header p{margin:0;color:#dbe7f7}
+section{background:#fff;border:1px solid #dce6f4;border-radius:16px;padding:19px;margin-top:16px;box-shadow:0 5px 18px rgba(35,61,112,.055)}
+h2{font-size:19px;margin:0 0 14px}.inputs{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:13px}
+label{display:block;font-size:13px;font-weight:bold;margin-bottom:6px}
+input{width:100%;padding:12px;border:1px solid #c5d2e8;border-radius:9px;font-size:16px;background:#fbfdff;color:#18243b;transition:border-color .15s,box-shadow .15s}input:focus{outline:none;border-color:#2875d0;box-shadow:0 0 0 3px rgba(40,117,208,.14)}
+button{background:linear-gradient(110deg,#2454c6,#087e8b);color:white;border:0;border-radius:10px;padding:14px 20px;font-size:15px;font-weight:bold;margin-top:15px;cursor:pointer;box-shadow:0 6px 15px rgba(36,84,198,.22);transition:transform .15s,filter .15s}button:hover{filter:brightness(1.06);transform:translateY(-1px)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px}
+.card{background:linear-gradient(145deg,#f5f8ff,#eaf2ff);border:1px solid #d7e4f7;border-radius:13px;padding:15px}
+.card span{display:block;color:#596b87;font-size:12px}.card strong{display:block;font-size:21px;margin-top:7px;overflow-wrap:anywhere;color:#1e3a8a}
+.tablewrap{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:900px;font-variant-numeric:tabular-nums}
+th,td{padding:10px;border-bottom:1px solid #e2e7ef;text-align:right;white-space:nowrap}
+th{background:#e8efff;color:#233e78;font-size:12px}th:first-child,td:first-child{text-align:left}tbody tr:nth-child(even){background:#f4f8ff}tbody tr:hover{background:#e9f8f6}
+.note{font-size:13px;line-height:1.55;color:#647187}.notice{background:linear-gradient(110deg,#eaf4ff,#e6fbf7);border:1px solid #b8e1e4;color:#174b68;padding:14px 16px;border-radius:12px;margin-top:12px;line-height:1.5}
+.warn{color:#b45309;font-weight:bold}.good{color:#087443;font-weight:bold}.emi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px}.emi-card{border:1px solid #d7e4f7;border-radius:12px;padding:13px;background:linear-gradient(150deg,#fff,#f1f7ff);box-shadow:0 3px 10px rgba(38,74,135,.045)}.emi-card .term{font-size:12px;color:#68758a;font-weight:bold}.emi-card .payment{font-size:22px;font-weight:800;margin:7px 0;color:#087e8b}.emi-card .sub{font-size:12px;color:#68758a}.section-kicker{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:#6c7c92;font-weight:bold;margin-bottom:6px}
+@media(max-width:600px){main{padding:9px}header{padding:17px}section{padding:12px}h1{font-size:21px}}
+</style>
+</head>
+<body>
+<main>
+<header>
+<div class="section-kicker" style="color:#c9ddfa">NJ EMI STORE · FINANCE DASHBOARD</div><h1>NJ EMI Store — Target IRR Dashboard</h1>
+<p>Calculate tenure-wise customer EMI and check the target NJC IRR</p>
+</header>
+<section>
+<h2>Enter the four inputs</h2>
+<div class="inputs">
+<div><label for="amount">Asset / Loan Amount (₹, incl. GST)</label><input id="amount" type="number" min="0.01" step="0.01" value="35875"></div>
+<div><label for="subvention">Subvention (%) incl. GST</label><input id="subvention" type="number" min="0" step="0.01" value="2.5"></div>
+<div><label for="target">Target NJC IRR (% p.a.)</label><input id="target" type="number" min="0" step="0.01" value="12"></div>
+<div><label for="days">Broken-period days</label><input id="days" type="number" min="0" step="1" value="16"></div>
+</div>
+<button onclick="calculate()">Run Calculation</button>
+<div id="notice" class="notice"><b>Quick guidelines:</b> Enter the product amount, subvention percentage, desired annual NJC IRR and broken-period days, then select <b>Run Calculation</b>. Review the monthly EMI for each tenure and check the achieved IRR/status before using the result. Customer interest rate will not go below 0%; when it is 0%, broken-period interest is zero. Subvention is treated as inclusive of 18% GST. Brokerage is assumed to be ₹0 because the workbook brokerage cells are blank.</div>
+</section>
+<section>
+<h2>Summary</h2><div id="summary" class="cards"></div>
+</section>
+<section>
+<h2>Customer monthly EMI dashboard</h2>
+<p class="note">Compare the monthly amount the customer would pay at each available tenure.</p>
+<div id="emiDashboard" class="emi-grid"></div>
+</section>
+<section>
+<h2>Tenure-wise results</h2>
+<div class="tablewrap"><table>
+<thead><tr>
+<th>Tenure</th><th>Customer interest rate</th><th>Monthly EMI (₹)</th>
+<th>Total customer repayment (₹)</th><th>Total interest (₹)</th>
+<th>Broken-period cash flow (₹)</th><th>Achieved NJC IRR</th><th>Status</th>
+</tr></thead>
+<tbody id="results"></tbody>
+</table></div>
+</section>
+<section>
+<h2>How the workbook model is applied</h2>
+<p class="note">
+1. <b>Subvention excluding GST</b> = amount × (subvention percentage ÷ 118%).<br>
+2. <b>Net initial outflow to NJC</b> = asset amount − net subvention receipt. Brokerage is set to zero because the uploaded workbook's brokerage cells are blank.<br>
+3. <b>EMI</b> uses Excel's PMT-equivalent reducing-balance formula, based on customer annual rate ÷ 12 and the selected tenure.<br>
+4. <b>Broken period</b> = −(asset amount × customer annual rate ÷ 100 ÷ 360) × days. It is included as a cash-flow period only when the customer rate is above 0%, matching Excel's blank-cell behaviour when rate is zero.<br>
+5. <b>Achieved IRR</b> is calculated using the initial NJC outflow, the broken-period cash flow when applicable, and the EMI cash flows, then annualized as monthly IRR × 12.<br>
+6. If the target IRR is already met or exceeded at a 0% customer rate, the calculator keeps the rate at 0% and flags the target result instead of using a negative interest rate.
+</p>
+</section>
+</main>
+<script>
+const tenures=[3,6,9,12,18,24,36,48,60,72,84];
+const whole=n=>Number.isFinite(n)?Math.round(n).toLocaleString('en-IN'):'—';
+const pct=n=>Number.isFinite(n)?n.toFixed(2)+'%':'—';
+function emi(p,annualPercent,months){
+ const r=(annualPercent/100)/12;
+ if(Math.abs(r)<1e-12)return p/months;
+ const f=Math.pow(1+r,months);
+ return p*r*f/(f-1);
+}
+function brokenPeriod(p,annualPercent,days){
+ return annualPercent>0 ? -(p*(annualPercent/100)/360)*days : 0;
+}
+function monthlyIRR(flows){
+ const npv=r=>flows.reduce((sum,value,index)=>sum+value/Math.pow(1+r,index),0);
+ let lo=-0.95,hi=2,fl=npv(lo),fh=npv(hi);
+ while(Number.isFinite(fh)&&fl*fh>0&&hi<100000){hi*=2;fh=npv(hi)}
+ if(!Number.isFinite(fl)||!Number.isFinite(fh)||fl*fh>0)return NaN;
+ for(let i=0;i<250;i++){
+  const mid=(lo+hi)/2,fm=npv(mid);
+  if(Math.abs(fm)<1e-8)return mid;
+  if(fl*fm<=0){hi=mid;fh=fm}else{lo=mid;fl=fm}
+ }
+ return (lo+hi)/2;
+}
+function evaluate(amount,subventionExGST,days,months,rate){
+ const netInitialOutflow=amount-subventionExGST;
+ const emiExact=emi(amount,rate,months);
+ const broken=brokenPeriod(amount,rate,days);
+ // Excel's blank broken-period cell is ignored when rate = 0%;
+ // otherwise the broken-period value occupies one cash-flow period.
+ const flows=[netInitialOutflow];
+ if(rate>0)flows.push(broken);
+ for(let i=0;i<months;i++)flows.push(-emiExact);
+ const achieved=monthlyIRR(flows)*12*100;
+ const emiRounded=Math.round(emiExact);
+ return {
+  months,rate,emiExact,emiRounded,total:emiRounded*months,
+  interest:emiRounded*months-amount,broken,achieved
+ };
+}
+function solveRate(amount,subventionExGST,days,months,target){
+ const achievedAtRate=rate=>evaluate(amount,subventionExGST,days,months,rate).achieved;
+ const atZero=achievedAtRate(0);
+ if(!Number.isFinite(atZero))return {...evaluate(amount,subventionExGST,days,months,0),status:'Check cash flows'};
+ if(atZero>=target){
+  return {...evaluate(amount,subventionExGST,days,months,0),
+    status:Math.abs(atZero-target)<0.03?'Target reached':'0% floor; target not reachable without negative rate'};
+ }
+ let lo=0,hi=50,highIRR=achievedAtRate(hi);
+ while(Number.isFinite(highIRR)&&highIRR<target&&hi<100000){
+  hi*=2;highIRR=achievedAtRate(hi);
+ }
+ if(!Number.isFinite(highIRR)||highIRR<target)
+  return {...evaluate(amount,subventionExGST,days,months,0),status:'Could not solve'};
+ for(let i=0;i<220;i++){
+  const mid=(lo+hi)/2,val=achievedAtRate(mid);
+  if(Math.abs(val-target)<0.00001){lo=hi=mid;break}
+  if(val>target)hi=mid;else lo=mid;
+ }
+ const result=evaluate(amount,subventionExGST,days,months,(lo+hi)/2);
+ result.status=Math.abs(result.achieved-target)<0.03?'Target reached':'Approximate';
+ return result;
+}
+function calculate(){
+ const amount=Number(document.getElementById('amount').value);
+ const subv=Number(document.getElementById('subvention').value);
+ const target=Number(document.getElementById('target').value);
+ const days=Number(document.getElementById('days').value);
+ const notice=document.getElementById('notice');
+ if(!Number.isFinite(amount)||amount<=0||!Number.isFinite(subv)||subv<0||
+    !Number.isFinite(target)||target<0||!Number.isFinite(days)||days<0){
+  notice.textContent='Please enter a positive amount and non-negative values for subvention, target IRR and broken-period days.';
+  document.getElementById('results').innerHTML='';
+  document.getElementById('summary').innerHTML='';
+  return;
+ }
+ const subventionExGST=amount*(subv/100)/1.18;
+ const data=tenures.map(months=>solveRate(amount,subventionExGST,days,months,target));
+ const floorCount=data.filter(x=>x.status.startsWith('0% floor')).length;
+ notice.innerHTML='<b>Calculation complete.</b> Review the monthly EMI dashboard and tenure-wise table below. Check the achieved NJC IRR and status for each tenure. If a row shows <b>0% floor</b>, the target IRR cannot be reached at a non-negative customer interest rate under this model.';
+ document.getElementById('emiDashboard').innerHTML=data.map(x=>`<div class="emi-card">
+ <div class="term">${x.months} MONTH${x.months===1?'':'S'}</div>
+ <div class="payment">₹${whole(x.emiRounded)}<span style="font-size:12px;font-weight:500;color:#68758a"> / month</span></div>
+ <div class="sub">Customer rate: ${pct(x.rate)}</div>
+ <div class="sub">Total repayment: ₹${whole(x.total)}</div>
+ </div>`).join('');
+ document.getElementById('results').innerHTML=data.map(x=>`<tr>
+ <td>${x.months} months</td>
+ <td>${pct(x.rate)}</td>
+ <td>₹${whole(x.emiRounded)}</td>
+ <td>₹${whole(x.total)}</td>
+ <td>₹${whole(x.interest)}</td>
+ <td>₹${whole(x.broken)}</td>
+ <td>${pct(x.achieved)}</td>
+ <td class="${x.status.startsWith('0% floor')?'warn':'good'}">${x.status}</td>
+ </tr>`).join('');
+ document.getElementById('summary').innerHTML=`
+ <div class="card"><span>Asset / loan amount</span><strong>₹${whole(amount)}</strong></div>
+ <div class="card"><span>Subvention incl. GST</span><strong>${pct(subv)}</strong></div>
+ <div class="card"><span>Subvention excl. GST</span><strong>₹${whole(subventionExGST)}</strong></div>
+ <div class="card"><span>Target NJC IRR</span><strong>${pct(target)}</strong></div>
+ <div class="card"><span>Tenures at 0% floor</span><strong>${floorCount} / ${tenures.length}</strong></div>`;
+}
+calculate();
+</script>
+</body>
+</html>
