@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>NJ EMI Store – IRR Calculator</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--ink:#0e1a2e;--paper:#eef2f7;--card:#fff;--line:#d9e1ec;--mute:#5d6c84;--blue:#2d5be3;--teal:#00967f;--amber:#b45f06;--hero:#0e1a2e;--herotext:#fff;--chip:#e3eaf5}
 @media(prefers-color-scheme:dark){:root{--ink:#e8eef8;--paper:#0a1220;--card:#121d31;--line:#243350;--mute:#95a5c0;--blue:#7ea0ff;--teal:#2fd1b3;--amber:#f0a84a;--hero:#1b2b4a;--chip:#1a2942}}
@@ -244,54 +244,48 @@ body{background:linear-gradient(180deg,#d9f3fb 0,var(--paper) 340px) no-repeat v
 .rowh{cursor:default;border-bottom:2px solid var(--line)!important;padding:4px 2px 7px}
 .rowh span{font-size:11.5px;font-weight:650;color:var(--mute)}
 
-/* ===== FUSE DASHBOARD reference: framed dark app, indigo + orange ===== */
-:root,:root:not([x]){--ink:#eceefb;--paper:#0c0d16;--card:#14151f;--line:#25273c;--mute:#8a8fae;--blue:#5b57f0;--teal:#a99cf2;--acc:#a99cf2;--pc:#a99cf2;--gold:#e8935a;--amber:#f0a35f;--warn:#f0a35f;--hero:#14151f;--chip:#1b1d2e;--disp:"Plus Jakarta Sans",system-ui,sans-serif;color-scheme:dark}
-body,input,button{font-family:"Plus Jakarta Sans",system-ui,sans-serif}
-body{background:radial-gradient(900px 520px at 50% -160px,#3d2b94,transparent 70%),linear-gradient(180deg,#0d0a28,#05060f 640px) no-repeat #05060f;padding:10px}
-main{max-width:1180px;margin:10px auto;padding:14px;background:#0f1019;border:1px solid #2b2e4d;border-radius:26px;box-shadow:0 0 0 5px rgba(110,95,240,.10),0 30px 80px -20px rgba(90,70,230,.5)}
-.top{grid-column:1/-1;background:none;border:0;box-shadow:none;padding:2px 4px 14px;margin-bottom:14px;border-bottom:1px solid var(--line)}
-.topin{max-width:none;margin:0;padding:0}
-.topin>div{display:flex;align-items:baseline;gap:6px 14px;flex-wrap:wrap}
-.top h1{font:700 18px var(--disp);letter-spacing:-.01em;margin:0;text-shadow:none}
-.top .sub{font-size:12px;color:var(--mute);margin:0;text-shadow:none}
-.logo{background:linear-gradient(135deg,#6a63ff,#3a34c8);border-radius:12px;width:40px;height:40px}
-.logo svg{stroke:#fff}
-.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:none;padding:16px}
-h2{font:700 14px var(--disp);color:var(--ink)}
-.field{background:#0c0d16;border-radius:10px}
-.field:focus-within{border-color:#6a63ff;box-shadow:0 0 0 3px rgba(106,99,255,.28)}
-.chips{gap:8px;padding:0 0 12px}
-.chip{background:#171829;border:1px solid var(--line);color:var(--ink);border-radius:999px;font-weight:600}
-.chip[aria-pressed=true]{background:#262378;border-color:#6a63ff;color:#fff}
-.hero{background:none!important;border:0;padding:0;box-shadow:none!important;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:12px}
-.kpi{background:#12131c;border:1px solid var(--line);border-radius:14px;padding:12px 13px 11px}
-.kpi.first{background:linear-gradient(135deg,#2c28a0,#4b46e3);border-color:#5b57f0}
-.kt{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;font-weight:600;color:var(--ink)}
-.kb{width:26px;height:26px;border-radius:8px;background:#20223a;border:1px solid var(--line);display:grid;place-items:center}
-.kpi.first .kb{background:rgba(255,255,255,.16);border-color:transparent}
-.kb .ic{margin:0;width:14px;height:14px}
-.kpi b{display:block;font:700 26px/1.1 var(--disp);letter-spacing:-.02em;margin:10px 0 4px}
-.kpi small{font-size:11.5px;color:var(--mute)}
-.kpi.first small{color:rgba(255,255,255,.75)}
-.kpi small.w{color:var(--amber)}
-.row[aria-pressed=true]{background:#1d1f33;box-shadow:inset 3px 0 0 #6a63ff}
-.row .s{color:var(--teal)}.row .s.warn{color:var(--amber)}
-.tabs{background:#0c0d16;border:1px solid var(--line)}
-.tabs button{font-size:12.5px;padding:8px 4px}
-.tabs button[aria-selected=true]{background:#4b46e3;color:#fff;box-shadow:none}
-.chart tr.on td{background:#1b1d2e}
-.k1{background:linear-gradient(90deg,hsl(205 80% 66%),hsl(300 80% 66%))}
-.grad{background:linear-gradient(90deg,hsl(205 80% 66%),hsl(252 80% 66%),hsl(300 80% 66%))}
-.stats div{background:#0c0d16;border:1px solid var(--line);border-radius:10px}
-.bl{font:700 8px var(--disp);fill:var(--ink);text-anchor:middle;pointer-events:none}
-@media(max-width:480px){.tabs .ic{display:none}.tabs button{font-size:12px}}
-@media(min-width:980px){
- main{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:16px;align-items:start}
- main>.panel:first-of-type{grid-column:2;grid-row:2}
- main>.panel:last-child{grid-column:2;grid-row:3;margin-bottom:0}
- #out{grid-column:1;grid-row:2/span 2;display:grid;grid-template-columns:1fr 1fr;gap:14px}
- #out>*{margin-bottom:0!important}
- #out>.chips{grid-column:1/-1;grid-row:1;padding-bottom:0}
+/* ===== NEON DASHBOARD: dark bento layout ===== */
+:root,:root:not([x]){--ink:#e9f0ff;--paper:#060a12;--card:#0f1626;--line:#1f2d4a;--mute:#8b9bbd;--blue:#22d3ee;--teal:#22d3ee;--acc:#22d3ee;--pc:#22d3ee;--gold:#fbbf24;--amber:#fb923c;--warn:#fb923c;--hero:#1a1260;--chip:#16213a;--disp:"Sora","Manrope",system-ui,sans-serif;color-scheme:dark}
+body,input,button{font-family:"Manrope",system-ui,sans-serif}
+body{background:radial-gradient(800px 380px at 88% -120px,rgba(139,92,246,.32),transparent 70%),radial-gradient(700px 380px at 0 -80px,rgba(34,211,238,.2),transparent 70%),#060a12 no-repeat}
+.top{background:transparent;border-bottom:1px solid var(--line);box-shadow:0 1px 0 rgba(34,211,238,.25);padding:16px 14px}
+.topin{max-width:1120px}
+.top h1{font:700 20px var(--disp);text-shadow:none}
+.top .sub{text-shadow:none;color:var(--mute)}
+.logo{background:linear-gradient(135deg,#22d3ee,#8b5cf6);border-radius:14px}
+.logo svg{stroke:#05101c}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px}
+h2{font:600 14px var(--disp);color:var(--ink)}
+.field{background:#0a1220;border-radius:12px}
+.field:focus-within{border-color:#22d3ee;box-shadow:0 0 0 3px rgba(34,211,238,.25)}
+.chips{gap:8px}
+.chip{background:var(--chip);color:var(--ink);border-radius:999px;font-weight:600}
+.chip[aria-pressed=true]{background:linear-gradient(135deg,#22d3ee,#8b5cf6);color:#05101c}
+.hero{background:radial-gradient(500px 220px at 100% 0,rgba(139,92,246,.55),transparent 70%),radial-gradient(420px 220px at 0 100%,rgba(34,211,238,.3),transparent 70%),#0d1530;border:1px solid var(--line);border-radius:24px;padding:22px 20px 18px}
+.hero .big{font:700 clamp(44px,9vw,68px)/1 var(--disp);letter-spacing:-.04em;background:linear-gradient(90deg,#67e8f9,#c4b5fd);-webkit-background-clip:text;background-clip:text;color:transparent;margin:8px 0 14px}
+.hero .big small{font:500 15px "Manrope",sans-serif;color:var(--mute);-webkit-text-fill-color:var(--mute);letter-spacing:0}
+.pill{background:rgba(34,211,238,.16);color:#67e8f9;border-radius:8px}
+.pill.warn{background:rgba(251,146,60,.18);color:#fdba74}
+.facts{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:18px}
+.facts div,.facts div:nth-child(odd){border:0;background:rgba(255,255,255,.06);border-radius:14px;padding:11px 13px}
+.facts b{font:700 17px var(--disp)}
+.row[aria-pressed=true]{background:linear-gradient(90deg,rgba(34,211,238,.16),rgba(139,92,246,.16));box-shadow:inset 3px 0 0 #22d3ee}
+.row .s{color:#22d3ee}.row .s.warn{color:var(--amber)}
+.rowh span{color:var(--mute)}
+.tabs{background:#0a1220}
+.tabs button[aria-selected=true]{background:linear-gradient(135deg,#22d3ee,#8b5cf6);color:#05101c;box-shadow:none}
+.chart tr.on td{background:var(--chip)}
+.k1{background:linear-gradient(90deg,hsl(190 85% 62%),hsl(340 85% 62%))}
+.grad{background:linear-gradient(90deg,hsl(190 85% 62%),hsl(265 85% 62%),hsl(340 85% 62%))}
+.stats div{background:#0a1220;border:1px solid var(--line);border-radius:12px}
+details ol{color:var(--mute)}
+@media(min-width:900px){
+ main{max-width:1120px;display:grid;grid-template-columns:320px 1fr;gap:16px;align-items:start;padding-top:20px}
+ main>.panel:first-child{grid-column:1;grid-row:1;position:sticky;top:16px}
+ main>.panel:last-child{grid-column:1;grid-row:2;margin-bottom:0}
+ #out{grid-column:2;grid-row:1/span 2;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+ #out>*{margin-bottom:0}
+ #out>.chips{grid-column:1/-1;grid-row:1}
  #out>.hero{grid-column:1/-1;grid-row:2}
  #dn{grid-column:1;grid-row:3}
  #bars{grid-column:2;grid-row:3}
@@ -299,73 +293,11 @@ h2{font:700 14px var(--disp);color:var(--ink)}
  #out>section:nth-of-type(5){grid-column:1/-1;grid-row:5}
  #out>section:nth-of-type(6){grid-column:1/-1;grid-row:6}
 }
-
-/* ===== Alignment pass ===== */
-.kt{align-items:flex-start;min-height:34px;gap:6px}
-.kt span{line-height:1.25}
-.kpi{display:flex;flex-direction:column}
-.kpi b{margin-top:auto;padding-top:8px}
-.row .t,.chart tr.cr td:first-child{white-space:nowrap}
-.row{grid-template-columns:.9fr 1.2fr .9fr .9fr 1fr}
-.row .s{white-space:nowrap}
-.chart td,.chart th{white-space:nowrap}
-.chart tr.xp td{white-space:normal}
-.hero{grid-template-columns:repeat(2,1fr)}
-.kpi:last-child:nth-child(odd){grid-column:1/-1}
-@media(min-width:640px){
- .hero{grid-template-columns:repeat(6,1fr)}
- .kpi,.kpi:last-child:nth-child(odd){grid-column:span 2}
- .kpi:nth-child(n+4){grid-column:span 3}
-}
-@media(min-width:1180px){
- .hero{grid-template-columns:repeat(5,1fr)}
- .kpi,.kpi:nth-child(n+4),.kpi:last-child:nth-child(odd){grid-column:auto}
-}
-@media(max-width:520px){
- body{padding:6px}
- main{padding:10px;border-radius:20px;margin:6px auto}
- .panel{padding:12px;border-radius:14px}
- .row{grid-template-columns:70px 1.25fr .85fr .85fr 62px;gap:2px;padding:10px 0}
- .row .t{font-size:12.5px}.row .t .dot{margin-right:5px}
- .row .e{font-size:13.5px}.row .m{font-size:12px}.row .s{font-size:10.5px}
- .rowh span{font-size:10.5px}
- .chart td{padding:9px 3px;font-size:12px}.chart th{padding:6px 3px 8px;font-size:11px}
- .chart tr.cr td:first-child .dot{margin-right:4px}
- .kpi b{font-size:23px}
- .top .sub{display:none}
-}
-@media(min-width:980px){
- .chips{flex-wrap:wrap;overflow:visible}
- main{grid-template-rows:auto auto auto 1fr}
- #out{grid-row:2/span 3}
- #dn{display:flex;flex-direction:column}
- #dn .dnw{flex:1;align-content:center}
- #bars{display:flex;flex-direction:column}
- #bars .cg{margin:auto 0}
-}
-
-.chart th,.chart td{text-align:center}
-.chart th:first-child,.chart td:first-child{text-align:left}
-.chart .bar{margin-left:auto;margin-right:auto}
-.chart .sm{display:none}
-@media(max-width:520px){.chart .lg{display:none}.chart .sm{display:inline}}
-
-@media(min-width:640px){.kpi:nth-child(5):last-child,.kpi:nth-child(4):nth-last-child(2){grid-column:span 3}}
-@media(min-width:1180px){.kpi:nth-child(5):last-child,.kpi:nth-child(4):nth-last-child(2){grid-column:auto}}
-@media(min-width:640px){.chips{flex-wrap:wrap;overflow:visible}}
-
-@media(min-width:980px){
- #dn .dnw{flex-direction:column;align-items:center;justify-content:space-evenly;gap:16px;flex:1}
- #dn .dn{width:min(100%,220px);height:auto}
- #dn .lg{width:100%;max-width:300px;min-width:0;flex:none}
- #bars .cg{max-height:340px}
-}
 </style>
 </head>
 <body>
-<main>
 <header class="top"><div class="topin"><span class="logo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12M6 9h12M6 4c6 0 8 2 8 5s-3 5-8 5l7 6"/></svg></span><div><h1>NJ EMI Store – IRR calculator</h1><p class="sub">Customer EMI for each tenure, solved to your target NJC IRR.</p></div></div></header>
-
+<main>
 
 <section class="panel">
  <div class="inputs">
@@ -383,7 +315,7 @@ h2{font:700 14px var(--disp);color:var(--ink)}
  <section class="panel" id="dn"></section>
  <section class="panel"><h2>All tenures</h2><div id="list"></div></section>
  <section class="panel" id="bars"></section>
- <section class="panel"><h2>Tenure, interest rate and EMI</h2><p style="margin:-4px 0 8px;font-size:12px;color:var(--mute)">Tap a tenure to see every payment.</p><table class="chart"><colgroup><col style="width:32%"><col style="width:23%"><col style="width:19%"><col style="width:26%"></colgroup><thead><tr><th>Tenure</th><th><span class="lg">Monthly EMI</span><span class="sm">EMI</span></th><th><span class="lg">Interest rate</span><span class="sm">Rate</span></th><th><span class="lg">Total paid</span><span class="sm">Total</span></th></tr></thead><tbody id="chart"></tbody></table></section>
+ <section class="panel"><h2>Tenure, interest rate and EMI</h2><p style="margin:-4px 0 8px;font-size:12px;color:var(--mute)">Tap a tenure to see every payment.</p><table class="chart"><colgroup><col style="width:29%"><col style="width:27%"><col style="width:19%"><col style="width:25%"></colgroup><thead><tr><th>Tenure</th><th>Monthly EMI</th><th>Interest rate</th><th>Total paid</th></tr></thead><tbody id="chart"></tbody></table></section>
  <section class="panel"><h2>Inputs as used</h2><div class="stats" id="stats"></div></section>
 </div>
 
@@ -407,8 +339,8 @@ const tenures=[3,6,9,12,18,24,36,48,60,72,84];
 const whole=n=>Number.isFinite(n)?Math.round(n).toLocaleString('en-IN'):'—';
 const pct=n=>Number.isFinite(n)?n.toFixed(2)+'%':'—';
 const $=id=>document.getElementById(id);
-const tc=m=>{const t=tenures.indexOf(m)/(tenures.length-1);return `hsl(${Math.round(205+95*t)} 80% 66%)`};
-const P_={cal:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',pct:'<path d="M19 5 5 19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>',wal:'<path d="M20 12V8H6a2 2 0 0 1 0-4h12v4"/><path d="M4 6v12a2 2 0 0 0 2 2h14v-4"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/>',up:'<path d="m3 17 6-6 4 4 8-8"/><path d="M15 7h6v6"/>',tgt:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',clk:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',rs:'<path d="M6 4h12M6 9h12M6 4c6 0 8 2 8 5s-3 5-8 5l7 6"/>',sum:'<path d="M18 7H6l6 5-6 5h12"/>',dots:'<circle cx="7" cy="8" r="3"/><circle cx="16" cy="9" r="4"/><circle cx="10" cy="17" r="3"/>',bar:'<path d="M5 21V10M12 21V4M19 21v-7"/>',line:'<path d="M3 3v18h18"/><path d="m7 15 4-5 3 3 5-6"/>',stack:'<path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/>'};
+const tc=m=>{const t=tenures.indexOf(m)/(tenures.length-1);return `hsl(${Math.round(190+150*t)} 85% 62%)`};
+const P_={cal:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',pct:'<path d="M19 5 5 19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>',wal:'<path d="M20 12V8H6a2 2 0 0 1 0-4h12v4"/><path d="M4 6v12a2 2 0 0 0 2 2h14v-4"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/>',up:'<path d="m3 17 6-6 4 4 8-8"/><path d="M15 7h6v6"/>',tgt:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',clk:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',rs:'<path d="M6 4h12M6 9h12M6 4c6 0 8 2 8 5s-3 5-8 5l7 6"/>',sum:'<path d="M18 7H6l6 5-6 5h12"/>',bar:'<path d="M5 21V10M12 21V4M19 21v-7"/>',line:'<path d="M3 3v18h18"/><path d="m7 15 4-5 3 3 5-6"/>',stack:'<path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/>'};
 const ic=n=>`<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${P_[n]}</svg>`;
 function drawExtra(){
  const x=data.find(d=>d.months===sel)||data[0],A=Number($('amount').value),I=Math.max(0,x.interest),T=A+I,C=2*Math.PI*52,pp=A/T*C,ip=I/T*C;
@@ -419,11 +351,6 @@ function drawExtra(){
 let tab='emi';
 const kfmt=v=>v>=1000?(v/1000).toFixed(1).replace('.0','')+'k':String(Math.round(v));
 function niceStep(v){const raw=Math.max(v,1)/4,mag=Math.pow(10,Math.floor(Math.log10(raw))),n=raw/mag;return(n<=1?1:n<=2?2:n<=2.5?2.5:n<=5?5:10)*mag}
-function bub(){const W=360,H=150,L=48,sw=(W-L-8)/data.length,cx=i=>L+sw*i+sw/2,me=Math.max(...data.map(d=>d.emiRounded),1),mi=Math.max(...data.map(d=>Math.max(0,d.interest)),1);let g='';
- [['EMI',44,d=>d.emiRounded,me,'var(--pc)'],['Interest',100,d=>Math.max(0,d.interest),mi,'var(--gold)']].forEach(r=>{g+=`<text x="${L-8}" y="${r[1]+3}" class="yl">${r[0]}</text>`;
-  data.forEach((d,i)=>{const v=r[2](d),on=d.months===sel,rad=5+Math.sqrt(v/r[3])*8.5;g+=`<circle cx="${cx(i)}" cy="${r[1]}" r="${rad}" fill="${r[4]}" fill-opacity="${on?.38:.16}" stroke="${r[4]}" stroke-width="${on?2.5:1}"/><text x="${cx(i)}" y="${r[1]+3}" class="bl">${kfmt(v)}</text>`})});
- data.forEach((d,i)=>{g+=`<text x="${cx(i)}" y="${H-8}" class="xl${d.months===sel?' on':''}">${d.months}</text><rect x="${L+sw*i}" y="0" width="${sw}" height="${H}" fill="transparent" data-m="${d.months}" class="hit"/>`});
- return `<svg class="cg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Bubble chart of EMI and interest by tenure">${g}</svg>`}
 function drawBars(){
  const W=360,H=264,L=40,R=8,T=50,B=32,pw=W-L-R,ph=H-T-B,n=data.length,sw=pw/n,A=Number($('amount').value),I=d=>Math.max(0,d.interest);
  const vals=data.map(d=>tab==='emi'?d.emiRounded:tab==='int'?I(d):A+I(d));
@@ -447,9 +374,9 @@ function drawBars(){
   data.forEach((d,i)=>{g+=lab(i,A+I(d),y(A+I(d))-5,d.months===sel)});
  }
  data.forEach((d,i)=>{g+=`<rect x="${L+sw*i}" y="${T-10}" width="${sw}" height="${ph+B+10}" fill="transparent" data-m="${d.months}" class="hit"/>`});
- const T_={emi:['Monthly EMI by tenure','<span><i class="k1"></i>Bar colour shows tenure, short to long</span>',`<b>${sd.months} months:</b> ₹${whole(sd.emiRounded)} per month`],int:['Interest paid by tenure','<span><i class="k4"></i>Total interest over the loan</span>',`<b>${sd.months} months:</b> ₹${whole(I(sd))} interest in total`],split:['Principal and interest by tenure','<span><i class="k3"></i>Principal</span><span><i class="k4"></i>Interest</span>',`<b>${sd.months} months:</b> ₹${whole(A)} principal + ₹${whole(I(sd))} interest`],bub:['EMI and interest bubbles','<span><i class="k3"></i>EMI</span><span><i class="k4"></i>Interest</span>',`<b>${sd.months} months:</b> ₹${whole(sd.emiRounded)} EMI, ₹${whole(I(sd))} interest`]}[tab];
- const tabs=[['emi','bar','EMI'],['int','line','Interest'],['split','stack','Split'],['bub','dots','Bubbles']].map(t=>`<button role="tab" data-tab="${t[0]}" aria-selected="${tab===t[0]}">${ic(t[1])}${t[2]}</button>`).join('');
- $('bars').innerHTML=`<h2>${T_[0]}</h2><div class="tabs" role="tablist">${tabs}</div><div class="keys">${T_[1]}</div>${tab==='bub'?bub():`<svg class="cg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${T_[0]}">${g}</svg>`}<div class="ro">${T_[2]}</div>`;
+ const T_={emi:['Monthly EMI by tenure','<span><i class="k1"></i>Bar colour shows tenure, short to long</span>',`<b>${sd.months} months:</b> ₹${whole(sd.emiRounded)} per month`],int:['Interest paid by tenure','<span><i class="k4"></i>Total interest over the loan</span>',`<b>${sd.months} months:</b> ₹${whole(I(sd))} interest in total`],split:['Principal and interest by tenure','<span><i class="k3"></i>Principal</span><span><i class="k4"></i>Interest</span>',`<b>${sd.months} months:</b> ₹${whole(A)} principal + ₹${whole(I(sd))} interest`]}[tab];
+ const tabs=[['emi','bar','EMI'],['int','line','Interest'],['split','stack','Split']].map(t=>`<button role="tab" data-tab="${t[0]}" aria-selected="${tab===t[0]}">${ic(t[1])}${t[2]}</button>`).join('');
+ $('bars').innerHTML=`<h2>${T_[0]}</h2><div class="tabs" role="tablist">${tabs}</div><div class="keys">${T_[1]}</div><svg class="cg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${T_[0]}">${g}</svg><div class="ro">${T_[2]}</div>`;
 }
 document.addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(b){tab=b.dataset.tab;drawBars()}});
 
@@ -486,7 +413,7 @@ function solveRate(amount,sub,days,months,target){
  return r;
 }
 const isWarn=s=>!(s==='Target reached');
-const short=s=>s.startsWith('0% floor')?'0% floor':s==='Target reached'?'Reached':s;
+const short=s=>s.startsWith('0% floor')?'0% floor':s;
 
 function breakup(x){
  const n=x.months,E=x.emiRounded,bp=Math.round(-x.broken),has=x.rate>0&&bp>0,r=x.rate/1200;
@@ -516,7 +443,16 @@ function render(){
  drawExtra();
  $('chips').innerHTML=data.map(x=>`<button class="chip" data-m="${x.months}" aria-pressed="${x.months===sel}"><i class="dot" style="background:${tc(x.months)}"></i>${x.months} mo</button>`).join('');
  const x=data.find(d=>d.months===sel)||data[0];
- $('hero').innerHTML=[['Monthly EMI','₹'+whole(x.emiRounded),'For '+x.months+' months','rs'],['Customer rate',pct(x.rate),x.status,'pct'],['Total repayment','₹'+whole(x.total),'Principal plus interest','wal'],['Achieved NJC IRR',pct(x.achieved),'Target '+pct(Number($('target').value)),'tgt'],['Broken-period','₹'+whole(x.broken),Number($('days').value)+' days','clk']].map((k,i)=>`<div class="kpi${i?'':' first'}"><div class="kt"><span>${k[0]}</span><i class="kb">${ic(k[3])}</i></div><b>${k[1]}</b><small class="${i==1&&isWarn(x.status)?'w':''}">${k[2]}</small></div>`).join('');
+ $('hero').innerHTML=`<div class="lbl">${ic('cal')}Monthly EMI for ${x.months} months</div>
+  <div class="big">₹${whole(x.emiRounded)}<small> / month</small></div>
+  <span class="pill ${isWarn(x.status)?'warn':''}">${x.status}</span>
+  <div class="facts">
+   <div><span>${ic('pct')}Customer rate</span><b>${pct(x.rate)}</b></div>
+   <div><span>${ic('tgt')}Achieved NJC IRR</span><b>${pct(x.achieved)}</b></div>
+   <div><span>${ic('wal')}Total repayment</span><b>₹${whole(x.total)}</b></div>
+   <div><span>${ic('up')}Total interest</span><b>₹${whole(x.interest)}</b></div>
+   <div><span>${ic('clk')}Broken-period cash flow</span><b>₹${whole(x.broken)}</b></div>
+  </div>`;
  const mx=Math.max(...data.map(d=>d.emiRounded));
  $('chart').innerHTML=data.map(d=>`<tr class="cr ${d.months===sel?'on':''}" data-c="${d.months}"><td><i class="dot" style="background:${tc(d.months)}"></i>${openM===d.months?'▾':'▸'} ${d.months} months</td><td>₹${whole(d.emiRounded)}<span class="bar" style="width:${Math.max(4,d.emiRounded/mx*100)}%;background:${tc(d.months)}"></span></td><td>${pct(d.rate)}</td><td>₹${whole(d.total)}</td></tr>`+(openM===d.months?`<tr class="xp"><td colspan="4">${sched(d)}</td></tr>`:'')).join('');
  $('list').innerHTML='<div class="row rowh"><span>Tenure</span><span>EMI</span><span>Rate</span><span>IRR</span><span>Status</span></div>'+data.map(d=>`<button class="row" data-m="${d.months}" aria-pressed="${d.months===sel}"><span class="t"><i class="dot" style="background:${tc(d.months)}"></i>${d.months} mo</span><span class="e">₹${whole(d.emiRounded)}</span><span class="m">${pct(d.rate)}</span><span class="m">${pct(d.achieved)}</span><span class="s ${isWarn(d.status)?'warn':''}">${short(d.status)}</span></button>`).join('');
