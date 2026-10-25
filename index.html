@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>NJ EMI Store – IRR Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--ink:#0e1a2e;--paper:#eef2f7;--card:#fff;--line:#d9e1ec;--mute:#5d6c84;--blue:#2d5be3;--teal:#00967f;--amber:#b45f06;--hero:#0e1a2e;--herotext:#fff;--chip:#e3eaf5}
 @media(prefers-color-scheme:dark){:root{--ink:#e8eef8;--paper:#0a1220;--card:#121d31;--line:#243350;--mute:#95a5c0;--blue:#7ea0ff;--teal:#2fd1b3;--amber:#f0a84a;--hero:#1b2b4a;--chip:#1a2942}}
@@ -49,23 +51,253 @@ h2{font-size:14px;margin:0 0 8px;color:var(--mute);font-weight:650}
 .stats div{background:var(--paper);border-radius:10px;padding:9px 11px}
 .stats span{display:block;font-size:12px;color:var(--mute)}
 .stats b{font-size:15px}
-.chart{width:100%;border-collapse:collapse}
+.chart{width:100%;table-layout:fixed;border-collapse:collapse}
 .chart th{font-size:12px;color:var(--mute);font-weight:650;text-align:right;padding:6px 6px 8px;border-bottom:2px solid var(--line)}
-.chart td{padding:9px 5px;font-size:14px;border-bottom:1px solid var(--line);text-align:right;font-weight:600}
+.chart td{padding:9px 5px;font-size:13.5px;border-bottom:1px solid var(--line);text-align:right;font-weight:600}
 .chart th:first-child,.chart td:first-child{text-align:left}
 .chart tr.on td{background:var(--chip)}
 .chart tr:last-child td{border-bottom:0}
+.chart tr.cr{cursor:pointer}
+.chart tr.xp td{padding:0 0 14px;text-align:left;font-weight:400;font-size:13px;white-space:normal}
+.chart .sch{margin-top:2px}
+.chart .bk td{font-weight:500}
+.chart .bk td:nth-child(2){font-weight:700}
+.chart .bk tfoot td{font-weight:750}
 .bar{display:block;height:5px;border-radius:3px;background:var(--blue);margin-top:5px;margin-left:auto;opacity:.75}
 details{font-size:13px;color:var(--mute)}
 summary{cursor:pointer;font-weight:650;color:var(--ink);font-size:14px}
 details ol{padding-left:18px;margin:10px 0 0}
 details li{margin-bottom:6px}
+
+.sch{margin-top:12px;text-align:left;white-space:normal}
+.sch .sh{font-weight:700;margin:0 0 2px;color:var(--ink)}
+.sch .ss{color:var(--mute);font-size:12px;margin-bottom:6px}
+.sch .sx{display:grid;grid-template-columns:28px 1fr auto;gap:8px;align-items:center;padding:8px 0;border-top:1px solid var(--line);color:var(--ink)}
+.sch .sx b{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--acc,var(--gold));display:grid;place-items:center;font-size:11px}
+.sch .sx.bp b{border-color:var(--warn)}
+.sch .sx u{text-decoration:none;font-weight:650}
+.sch .sx em{display:block;font-style:normal;color:var(--mute);font-size:11.5px}
+.sch .sx strong{font-weight:750}
+.sch details{padding:0;font-size:inherit;color:inherit}
+.sch summary{cursor:pointer;color:var(--acc,var(--gold));font-weight:650;padding:6px 0;font-size:12.5px}
+.sch .pl{max-height:260px;overflow:auto;border:1px solid var(--line);border-radius:8px}
+.sch .pl div{display:grid;grid-template-columns:30px 1fr auto auto;gap:8px;padding:6px 8px;border-bottom:1px solid var(--line);font-size:12px;color:var(--ink)}
+.sch .pl div:last-child{border:0}
+.sch .pl i{font-style:normal;color:var(--mute);min-width:78px;text-align:right}
+
+.bkw{max-width:100%;overflow-x:auto;overflow-y:auto;max-height:440px;border:1px solid var(--line);border-radius:8px;margin-top:8px;background:transparent}
+.bk{width:100%;min-width:0;border-collapse:collapse;font-size:12px;color:var(--ink);font-variant-numeric:tabular-nums}
+.bk th{position:sticky;top:0;background:var(--card,var(--panel));color:var(--mute);font-size:10.5px;font-weight:650;text-align:right;padding:7px 5px;border-bottom:1px solid var(--line);white-space:nowrap;z-index:1}
+.bk td{text-align:right;padding:7px 5px;border-bottom:1px solid var(--line);white-space:nowrap}
+.bk th:first-child,.bk td:first-child{text-align:left}
+.bk small{font-size:9.5px;font-weight:700;margin-left:2px}
+.bk td:nth-child(2){font-weight:700}
+.bk tr.bp td{color:var(--warn)}
+.bk tfoot td{position:sticky;bottom:0;background:var(--card,var(--panel));font-weight:750;border-top:2px solid var(--line);border-bottom:0}
+
+/* Break-up table: centred, immune to outer .chart td rules */
+.chart tr.xp .bk{table-layout:fixed;width:100%;min-width:400px}
+.chart tr.xp .bk th,.chart tr.xp .bk td{text-align:center;padding:8px 4px;font-size:12.5px;font-weight:500;white-space:nowrap;color:var(--ink)}
+.chart tr.xp .bk th{font-size:10.5px;font-weight:650;color:var(--mute);padding:7px 4px}
+.chart tr.xp .bk td:nth-child(2){font-weight:700}
+.chart tr.xp .bk tr.bp td{color:var(--warn,var(--amber))}
+.chart tr.xp .bk tfoot td{font-weight:750}
+.chart tr.xp .bk td:first-child,.chart tr.xp .bk th:first-child{text-align:center;width:13%}
+
+/* ===== Design refresh: ledger green + marigold ===== */
+:root{--ink:#14211c;--paper:#eef1ec;--card:#fbfcfa;--line:#d6ddd6;--mute:#5b6d64;--blue:#0e3b31;--teal:#0e6b57;--amber:#b4561b;--warn:#b4561b;--acc:#0e6b57;--gold:#f2b01e;--hero:#0e3b31;--chip:#e2e9e2;--disp:"Bricolage Grotesque","Instrument Sans",system-ui,sans-serif}
+@media(prefers-color-scheme:dark){:root{--ink:#e6eee9;--paper:#0b1512;--card:#121e1a;--line:#223630;--mute:#92a69d;--blue:#f2b01e;--teal:#4fd1b0;--amber:#ff9d6b;--warn:#ff9d6b;--acc:#4fd1b0;--hero:#15483b;--chip:#1a2c26}}
+body{font-family:"Instrument Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{padding-top:20px}
+h1{font:700 24px/1.15 var(--disp);letter-spacing:-.02em;margin:4px 2px 4px}
+.sub{font-size:13.5px}
+.panel{border-radius:10px;background:var(--card)}
+h2{font:600 14px var(--disp);color:var(--ink);letter-spacing:0}
+label{font-weight:500}
+.field{border-radius:8px;background:var(--paper)}
+.field:focus-within{border-color:var(--teal);box-shadow:0 0 0 3px color-mix(in srgb,var(--teal) 24%,transparent)}
+input{font:600 17px "Instrument Sans",system-ui,sans-serif}
+.chips{gap:6px}
+.chip{border-radius:8px;font:600 14px "Instrument Sans",system-ui,sans-serif;background:var(--chip);transition:background .15s,color .15s}
+.chip[aria-pressed=true]{background:var(--hero);color:var(--gold)}
+@media(prefers-color-scheme:dark){.chip[aria-pressed=true]{background:var(--gold);color:#0b1512}}
+.hero{border-radius:20px;padding:22px 20px 10px;background:var(--hero)}
+.hero .lbl{font-size:13px;opacity:.8}
+.hero .big{font:700 58px/1 var(--disp);letter-spacing:-.035em;color:var(--gold);margin:8px 0 12px}
+.hero .big small{font:500 15px "Instrument Sans",sans-serif;color:#fff;opacity:.7;letter-spacing:0}
+.pill{background:rgba(242,176,30,.18);color:#f7cc62;border-radius:6px}
+.pill.warn{background:rgba(255,255,255,.14);color:#ffc4a6}
+.facts b{font:600 17px var(--disp)}
+.row{border-radius:0;grid-template-columns:58px 1fr auto}
+.row .t{font:600 15px var(--disp)}
+.row .e{font:700 18px var(--disp);letter-spacing:-.01em}
+.row[aria-pressed=true]{background:var(--chip);border-radius:8px;box-shadow:inset 3px 0 0 var(--gold)}
+.row .s{color:var(--teal)}
+.row .s.warn{color:var(--amber)}
+.chart th{color:var(--mute)}
+.chart tr.on td{background:var(--chip)}
+.chart tr.cr td:first-child{font-family:var(--disp);font-weight:600}
+.bar{background:var(--gold);opacity:1;height:4px}
+.stats div{border-radius:8px;background:var(--paper)}
+.stats b{font-family:var(--disp)}
+.chart tr.xp .bk th{background:var(--card)}
+.chart tr.xp .bk tr.bp td{color:var(--amber)}
+.sch .sx.bp b{border-color:var(--amber)}
+summary{font-family:var(--disp)}
+@media(prefers-reduced-motion:reduce){.chip{transition:none}}
+
+/* ===== Icons, tenure colour grading, charts ===== */
+:root{--pc:#0e6b57}
+@media(prefers-color-scheme:dark){:root{--pc:#4fd1b0}}
+.ic{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none;margin-right:7px}
+.hero .lbl,.facts span{display:flex;align-items:center}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:7px;flex:none}
+.chip{display:inline-flex;align-items:center}
+.chip .dot{margin-right:6px}
+.row{grid-template-columns:66px 1fr auto}
+.row .t,.chart tr.cr td:first-child{display:flex;align-items:center}
+.chart tr.cr td:first-child{display:table-cell}
+.dnw{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.dn{width:150px;height:150px;flex:none}
+.dn text{fill:var(--ink);text-anchor:middle}
+.dn .d1{font:700 22px var(--disp)}
+.dn .d2{font-size:11px;fill:var(--mute)}
+.lg{flex:1;min-width:160px;display:grid;gap:12px}
+.lg>div{display:flex;align-items:center;gap:10px}
+.lg .sw{width:32px;height:32px;border-radius:8px;display:grid;place-items:center;flex:none}
+.lg .sw .ic{margin:0;width:17px;height:17px}
+.sw.p{background:var(--pc);color:var(--card)}
+.sw.i{background:var(--gold);color:#14211c}
+.sw.t{background:var(--chip);color:var(--ink)}
+.lg b{display:block;font:700 17px var(--disp);line-height:1.15}
+.lg .l{font-size:12px;color:var(--mute)}
+.keys{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--mute);margin:0 0 6px;align-items:center}
+.keys span{display:inline-flex;align-items:center;gap:6px}
+.keys i{width:14px;height:8px;border-radius:2px;display:inline-block}
+.k1{background:linear-gradient(90deg,hsl(165 62% 46%),hsl(15 62% 46%))}
+.k2{background:repeating-linear-gradient(135deg,var(--gold) 0 3px,color-mix(in srgb,var(--gold) 50%,transparent) 3px 6px)}
+.bgl{display:grid;grid-template-columns:54px 1fr;gap:8px;align-items:center;width:100%;border:0;background:none;color:inherit;text-align:left;font:inherit;padding:7px 6px;border-radius:8px;cursor:pointer}
+.bgl[aria-pressed=true]{background:var(--chip)}
+.bgl .bt{font:600 13px var(--disp);display:flex;align-items:center}
+.bb>div{display:flex;align-items:center;gap:6px;height:15px}
+.bb i{display:block;height:10px;border-radius:0 5px 5px 0;min-width:2px}
+.bb em{font-style:normal;font-size:11.5px;font-weight:600;color:var(--mute);white-space:nowrap}
+.b2 i{background:repeating-linear-gradient(135deg,var(--gold) 0 4px,color-mix(in srgb,var(--gold) 50%,transparent) 4px 8px)}
+.grad{height:6px;border-radius:3px;margin:12px 0 4px;background:linear-gradient(90deg,hsl(165 62% 46%),hsl(90 62% 46%),hsl(15 62% 46%))}
+.gl{display:flex;justify-content:space-between;font-size:11px;color:var(--mute)}
+
+/* ===== Chart tabs ===== */
+.tabs{display:flex;gap:4px;background:var(--chip);padding:4px;border-radius:10px;margin:0 0 12px}
+.tabs button{flex:1;border:0;background:none;color:var(--mute);font:600 13px "Instrument Sans",system-ui,sans-serif;padding:8px 6px;border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.tabs button[aria-selected=true]{background:var(--card);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.14)}
+.tabs .ic{margin-right:6px}
+.cg{width:100%;height:auto;display:block}
+.gl0{stroke:var(--line);stroke-width:1}
+.yl{font-size:9.5px;fill:var(--mute);text-anchor:end}
+.xl{font-size:10px;fill:var(--mute);text-anchor:middle}
+.xl.on{fill:var(--ink);font-weight:700}
+.xt{font-size:10px;fill:var(--mute);text-anchor:middle}
+.vl{font:700 11px var(--disp);fill:var(--ink);text-anchor:middle}
+.hit{cursor:pointer}
+.dl{font:600 9.5px var(--disp);fill:var(--mute);text-anchor:start;pointer-events:none}
+.dl.on{fill:var(--ink);font-weight:700}
+.ro{margin-top:8px;font-size:13px;color:var(--mute)}
+.ro b{color:var(--ink)}
+.k3{background:var(--pc)}
+.k4{background:var(--gold)}
+
+/* ===== Header band ===== */
+.top{background:linear-gradient(135deg,#0a2b24 0%,#0e5a49 100%);border-bottom:4px solid var(--gold);padding:20px 14px 22px}
+.topin{max-width:720px;margin:auto;display:flex;align-items:center;gap:13px;padding:0 2px}
+.top h1{color:#fff;margin:0 0 3px;font-size:22px}
+.top .sub{color:rgba(255,255,255,.78);margin:0}
+.logo{width:44px;height:44px;border-radius:12px;background:var(--gold);display:grid;place-items:center;flex:none}
+.logo svg{width:24px;height:24px;stroke:#0a2b24;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+main{padding-top:16px}
+
+/* ===== Blue theme ===== */
+:root{--ink:#0f1b33;--paper:#edf2fa;--card:#fbfcff;--line:#d5deee;--mute:#5a6b88;--blue:#1f4fb8;--teal:#1f5fd0;--acc:#1f5fd0;--pc:#2457c5;--hero:#12306b;--chip:#e0e8f6}
+@media(prefers-color-scheme:dark){:root{--ink:#e6edfa;--paper:#0a1226;--card:#111c36;--line:#22345a;--mute:#93a4c6;--blue:#7fb0ff;--teal:#7fb0ff;--acc:#7fb0ff;--pc:#7fb0ff;--hero:#17336b;--chip:#1a2a4d}}
+.top{background:linear-gradient(135deg,#0b1f4a 0%,#1d4fb4 100%)}
+.logo svg{stroke:#0b1f4a}
+.k1{background:linear-gradient(90deg,hsl(205 70% 48%),hsl(15 70% 48%))}
+.grad{background:linear-gradient(90deg,hsl(205 70% 48%),hsl(110 70% 48%),hsl(15 70% 48%))}
+.field:focus-within{border-color:var(--teal);box-shadow:0 0 0 3px color-mix(in srgb,var(--teal) 24%,transparent)}
+
+/* ===== Blue to light cyan gradients ===== */
+.top{background:radial-gradient(circle at 100% 100%,rgba(140,238,250,.85),transparent 48%),linear-gradient(120deg,#0f3a9a 0%,#1b78d0 62%,#2bb5e0 100%)}
+.top h1,.top .sub{text-shadow:0 1px 6px rgba(8,30,90,.35)}
+.hero{background:radial-gradient(circle at 100% 0,rgba(70,214,236,.5),transparent 55%),linear-gradient(135deg,#12378a 0%,#14509f 100%)}
+body{background:linear-gradient(180deg,#d9f3fb 0,var(--paper) 340px) no-repeat var(--paper)}
+@media(prefers-color-scheme:dark){
+ body{background:linear-gradient(180deg,#0c2438 0,var(--paper) 340px) no-repeat var(--paper)}
+ .hero{background:radial-gradient(circle at 100% 0,rgba(70,214,236,.32),transparent 55%),linear-gradient(135deg,#14336f 0%,#17407f 100%)}
+}
+
+/* ===== All tenures: centred, aligned columns ===== */
+.row{grid-template-columns:.95fr 1.15fr .85fr .85fr 1fr;gap:4px;padding:10px 2px;text-align:center;align-items:center}
+.row>span{text-align:center;justify-content:center}
+.row .t{font-size:13.5px}
+.row .e{font-size:15.5px}
+.row .m{font-size:13px;color:var(--ink);font-weight:500}
+.row .s{max-width:none;text-align:center;font-size:11.5px}
+.rowh{cursor:default;border-bottom:2px solid var(--line)!important;padding:4px 2px 7px}
+.rowh span{font-size:11.5px;font-weight:650;color:var(--mute)}
+
+/* ===== NEON DASHBOARD: dark bento layout ===== */
+:root,:root:not([x]){--ink:#e9f0ff;--paper:#060a12;--card:#0f1626;--line:#1f2d4a;--mute:#8b9bbd;--blue:#22d3ee;--teal:#22d3ee;--acc:#22d3ee;--pc:#22d3ee;--gold:#fbbf24;--amber:#fb923c;--warn:#fb923c;--hero:#1a1260;--chip:#16213a;--disp:"Sora","Manrope",system-ui,sans-serif;color-scheme:dark}
+body,input,button{font-family:"Manrope",system-ui,sans-serif}
+body{background:radial-gradient(800px 380px at 88% -120px,rgba(139,92,246,.32),transparent 70%),radial-gradient(700px 380px at 0 -80px,rgba(34,211,238,.2),transparent 70%),#060a12 no-repeat}
+.top{background:transparent;border-bottom:1px solid var(--line);box-shadow:0 1px 0 rgba(34,211,238,.25);padding:16px 14px}
+.topin{max-width:1120px}
+.top h1{font:700 20px var(--disp);text-shadow:none}
+.top .sub{text-shadow:none;color:var(--mute)}
+.logo{background:linear-gradient(135deg,#22d3ee,#8b5cf6);border-radius:14px}
+.logo svg{stroke:#05101c}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px}
+h2{font:600 14px var(--disp);color:var(--ink)}
+.field{background:#0a1220;border-radius:12px}
+.field:focus-within{border-color:#22d3ee;box-shadow:0 0 0 3px rgba(34,211,238,.25)}
+.chips{gap:8px}
+.chip{background:var(--chip);color:var(--ink);border-radius:999px;font-weight:600}
+.chip[aria-pressed=true]{background:linear-gradient(135deg,#22d3ee,#8b5cf6);color:#05101c}
+.hero{background:radial-gradient(500px 220px at 100% 0,rgba(139,92,246,.55),transparent 70%),radial-gradient(420px 220px at 0 100%,rgba(34,211,238,.3),transparent 70%),#0d1530;border:1px solid var(--line);border-radius:24px;padding:22px 20px 18px}
+.hero .big{font:700 clamp(44px,9vw,68px)/1 var(--disp);letter-spacing:-.04em;background:linear-gradient(90deg,#67e8f9,#c4b5fd);-webkit-background-clip:text;background-clip:text;color:transparent;margin:8px 0 14px}
+.hero .big small{font:500 15px "Manrope",sans-serif;color:var(--mute);-webkit-text-fill-color:var(--mute);letter-spacing:0}
+.pill{background:rgba(34,211,238,.16);color:#67e8f9;border-radius:8px}
+.pill.warn{background:rgba(251,146,60,.18);color:#fdba74}
+.facts{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:18px}
+.facts div,.facts div:nth-child(odd){border:0;background:rgba(255,255,255,.06);border-radius:14px;padding:11px 13px}
+.facts b{font:700 17px var(--disp)}
+.row[aria-pressed=true]{background:linear-gradient(90deg,rgba(34,211,238,.16),rgba(139,92,246,.16));box-shadow:inset 3px 0 0 #22d3ee}
+.row .s{color:#22d3ee}.row .s.warn{color:var(--amber)}
+.rowh span{color:var(--mute)}
+.tabs{background:#0a1220}
+.tabs button[aria-selected=true]{background:linear-gradient(135deg,#22d3ee,#8b5cf6);color:#05101c;box-shadow:none}
+.chart tr.on td{background:var(--chip)}
+.k1{background:linear-gradient(90deg,hsl(190 85% 62%),hsl(340 85% 62%))}
+.grad{background:linear-gradient(90deg,hsl(190 85% 62%),hsl(265 85% 62%),hsl(340 85% 62%))}
+.stats div{background:#0a1220;border:1px solid var(--line);border-radius:12px}
+details ol{color:var(--mute)}
+@media(min-width:900px){
+ main{max-width:1120px;display:grid;grid-template-columns:320px 1fr;gap:16px;align-items:start;padding-top:20px}
+ main>.panel:first-child{grid-column:1;grid-row:1;position:sticky;top:16px}
+ main>.panel:last-child{grid-column:1;grid-row:2;margin-bottom:0}
+ #out{grid-column:2;grid-row:1/span 2;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+ #out>*{margin-bottom:0}
+ #out>.chips{grid-column:1/-1;grid-row:1}
+ #out>.hero{grid-column:1/-1;grid-row:2}
+ #dn{grid-column:1;grid-row:3}
+ #bars{grid-column:2;grid-row:3}
+ #out>section:nth-of-type(3){grid-column:1/-1;grid-row:4}
+ #out>section:nth-of-type(5){grid-column:1/-1;grid-row:5}
+ #out>section:nth-of-type(6){grid-column:1/-1;grid-row:6}
+}
 </style>
 </head>
 <body>
+<header class="top"><div class="topin"><span class="logo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12M6 9h12M6 4c6 0 8 2 8 5s-3 5-8 5l7 6"/></svg></span><div><h1>NJ EMI Store – IRR calculator</h1><p class="sub">Customer EMI for each tenure, solved to your target NJC IRR.</p></div></div></header>
 <main>
-<h1>NJ EMI Store – IRR calculator</h1>
-<p class="sub">Customer EMI for each tenure, solved to your target NJC IRR.</p>
 
 <section class="panel">
  <div class="inputs">
@@ -80,8 +312,10 @@ details li{margin-bottom:6px}
 <div id="out" hidden>
  <div class="chips" id="chips" aria-label="Choose tenure"></div>
  <section class="hero" id="hero"></section>
+ <section class="panel" id="dn"></section>
  <section class="panel"><h2>All tenures</h2><div id="list"></div></section>
- <section class="panel"><h2>Tenure, interest rate and EMI</h2><table class="chart"><thead><tr><th>Tenure</th><th>Interest rate</th><th>Monthly EMI</th><th>Total paid</th></tr></thead><tbody id="chart"></tbody></table></section>
+ <section class="panel" id="bars"></section>
+ <section class="panel"><h2>Tenure, interest rate and EMI</h2><p style="margin:-4px 0 8px;font-size:12px;color:var(--mute)">Tap a tenure to see every payment.</p><table class="chart"><colgroup><col style="width:29%"><col style="width:27%"><col style="width:19%"><col style="width:25%"></colgroup><thead><tr><th>Tenure</th><th>Monthly EMI</th><th>Interest rate</th><th>Total paid</th></tr></thead><tbody id="chart"></tbody></table></section>
  <section class="panel"><h2>Inputs as used</h2><div class="stats" id="stats"></div></section>
 </div>
 
@@ -105,7 +339,49 @@ const tenures=[3,6,9,12,18,24,36,48,60,72,84];
 const whole=n=>Number.isFinite(n)?Math.round(n).toLocaleString('en-IN'):'—';
 const pct=n=>Number.isFinite(n)?n.toFixed(2)+'%':'—';
 const $=id=>document.getElementById(id);
-let data=[],sel=12;
+const tc=m=>{const t=tenures.indexOf(m)/(tenures.length-1);return `hsl(${Math.round(190+150*t)} 85% 62%)`};
+const P_={cal:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',pct:'<path d="M19 5 5 19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>',wal:'<path d="M20 12V8H6a2 2 0 0 1 0-4h12v4"/><path d="M4 6v12a2 2 0 0 0 2 2h14v-4"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/>',up:'<path d="m3 17 6-6 4 4 8-8"/><path d="M15 7h6v6"/>',tgt:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',clk:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',rs:'<path d="M6 4h12M6 9h12M6 4c6 0 8 2 8 5s-3 5-8 5l7 6"/>',sum:'<path d="M18 7H6l6 5-6 5h12"/>',bar:'<path d="M5 21V10M12 21V4M19 21v-7"/>',line:'<path d="M3 3v18h18"/><path d="m7 15 4-5 3 3 5-6"/>',stack:'<path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/>'};
+const ic=n=>`<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${P_[n]}</svg>`;
+function drawExtra(){
+ const x=data.find(d=>d.months===sel)||data[0],A=Number($('amount').value),I=Math.max(0,x.interest),T=A+I,C=2*Math.PI*52,pp=A/T*C,ip=I/T*C;
+ $('hero').style.boxShadow=`inset 0 6px 0 ${tc(x.months)}`;
+ $('dn').innerHTML=`<h2>Principal vs interest, ${x.months} months</h2><div class="dnw"><svg class="dn" viewBox="0 0 140 140" role="img" aria-label="Principal ₹${whole(A)}, interest ₹${whole(I)}"><circle cx="70" cy="70" r="52" fill="none" stroke="var(--line)" stroke-width="20"/><circle cx="70" cy="70" r="52" fill="none" stroke="var(--pc)" stroke-width="20" stroke-dasharray="${pp} ${C}" transform="rotate(-90 70 70)"/><circle cx="70" cy="70" r="52" fill="none" stroke="var(--gold)" stroke-width="20" stroke-dasharray="${ip} ${C}" stroke-dashoffset="${-pp}" transform="rotate(-90 70 70)"/><text x="70" y="70" class="d1">${(I/T*100).toFixed(1)}%</text><text x="70" y="88" class="d2">is interest</text></svg><div class="lg"><div><span class="sw p">${ic('wal')}</span><span><b>₹${whole(A)}</b><span class="l">Principal, ${(A/T*100).toFixed(1)}%</span></span></div><div><span class="sw i">${ic('up')}</span><span><b>₹${whole(I)}</b><span class="l">Interest paid</span></span></div><div><span class="sw t">${ic('sum')}</span><span><b>₹${whole(T)}</b><span class="l">Total repayment</span></span></div></div></div>`;
+ drawBars();
+}
+let tab='emi';
+const kfmt=v=>v>=1000?(v/1000).toFixed(1).replace('.0','')+'k':String(Math.round(v));
+function niceStep(v){const raw=Math.max(v,1)/4,mag=Math.pow(10,Math.floor(Math.log10(raw))),n=raw/mag;return(n<=1?1:n<=2?2:n<=2.5?2.5:n<=5?5:10)*mag}
+function drawBars(){
+ const W=360,H=264,L=40,R=8,T=50,B=32,pw=W-L-R,ph=H-T-B,n=data.length,sw=pw/n,A=Number($('amount').value),I=d=>Math.max(0,d.interest);
+ const vals=data.map(d=>tab==='emi'?d.emiRounded:tab==='int'?I(d):A+I(d));
+ const st=niceStep(Math.max(...vals)),top=st*4,y=v=>T+ph-v/top*ph,hh=v=>v/top*ph,cx=i=>L+sw*i+sw/2,bw=Math.min(20,sw*.68);
+ const lab=(i,v,yy,on)=>`<text transform="rotate(-90 ${cx(i)+3.4} ${yy})" x="${cx(i)+3.4}" y="${yy}" class="dl${on?' on':''}">${whole(v)}</text>`;
+ let g='';
+ for(let k=0;k<=4;k++){const v=st*k;g+=`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" class="gl0"/><text x="${L-5}" y="${y(v)+3}" class="yl">${k?'₹'+kfmt(v):'0'}</text>`}
+ data.forEach((d,i)=>{g+=`<text x="${cx(i)}" y="${H-B+14}" class="xl${d.months===sel?' on':''}">${d.months}</text>`});
+ g+=`<text x="${L+pw/2}" y="${H-4}" class="xt">Tenure in months</text>`;
+ const si=data.findIndex(d=>d.months===sel),sd=data[si]||data[0];
+ if(tab==='emi'){
+  data.forEach((d,i)=>{g+=`<rect x="${cx(i)-bw/2}" y="${y(d.emiRounded)}" width="${bw}" height="${hh(d.emiRounded)}" rx="3" fill="${tc(d.months)}" opacity="${d.months===sel?1:.6}"${d.months===sel?' stroke="var(--ink)" stroke-width="1.5"':''}/>`});
+  data.forEach((d,i)=>{g+=lab(i,d.emiRounded,y(d.emiRounded)-5,d.months===sel)});
+ }else if(tab==='int'){
+  const pts=data.map((d,i)=>`${cx(i)},${y(I(d))}`);
+  g+=`<path d="M${cx(0)},${y(0)} L${pts.join(' L')} L${cx(n-1)},${y(0)} Z" fill="var(--gold)" opacity=".2"/><polyline points="${pts.join(' ')}" fill="none" stroke="var(--gold)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+  data.forEach((d,i)=>{const on=d.months===sel;g+=`<circle cx="${cx(i)}" cy="${y(I(d))}" r="${on?6:3.5}" fill="${tc(d.months)}" stroke="${on?'var(--ink)':'var(--card)'}" stroke-width="${on?2:1.5}"/>`});
+  data.forEach((d,i)=>{g+=lab(i,I(d),y(I(d))-11,d.months===sel)});
+ }else{
+  data.forEach((d,i)=>{const on=d.months===sel,o=on?1:.7;g+=`<rect x="${cx(i)-bw/2}" y="${y(A)}" width="${bw}" height="${hh(A)}" fill="var(--pc)" opacity="${o}"/><rect x="${cx(i)-bw/2}" y="${y(A+I(d))}" width="${bw}" height="${hh(I(d))}" fill="var(--gold)" opacity="${o}"/>`+(on?`<rect x="${cx(i)-bw/2-1}" y="${y(A+I(d))-1}" width="${bw+2}" height="${hh(A+I(d))+2}" fill="none" stroke="var(--ink)" stroke-width="1.5" rx="2"/>`:'')});
+  data.forEach((d,i)=>{g+=lab(i,A+I(d),y(A+I(d))-5,d.months===sel)});
+ }
+ data.forEach((d,i)=>{g+=`<rect x="${L+sw*i}" y="${T-10}" width="${sw}" height="${ph+B+10}" fill="transparent" data-m="${d.months}" class="hit"/>`});
+ const T_={emi:['Monthly EMI by tenure','<span><i class="k1"></i>Bar colour shows tenure, short to long</span>',`<b>${sd.months} months:</b> ₹${whole(sd.emiRounded)} per month`],int:['Interest paid by tenure','<span><i class="k4"></i>Total interest over the loan</span>',`<b>${sd.months} months:</b> ₹${whole(I(sd))} interest in total`],split:['Principal and interest by tenure','<span><i class="k3"></i>Principal</span><span><i class="k4"></i>Interest</span>',`<b>${sd.months} months:</b> ₹${whole(A)} principal + ₹${whole(I(sd))} interest`]}[tab];
+ const tabs=[['emi','bar','EMI'],['int','line','Interest'],['split','stack','Split']].map(t=>`<button role="tab" data-tab="${t[0]}" aria-selected="${tab===t[0]}">${ic(t[1])}${t[2]}</button>`).join('');
+ $('bars').innerHTML=`<h2>${T_[0]}</h2><div class="tabs" role="tablist">${tabs}</div><div class="keys">${T_[1]}</div><svg class="cg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${T_[0]}">${g}</svg><div class="ro">${T_[2]}</div>`;
+}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(b){tab=b.dataset.tab;drawBars()}});
+
+
+let data=[],sel=12,openM=null;
 
 function emi(p,a,m){const r=a/100/12;if(Math.abs(r)<1e-12)return p/m;const f=Math.pow(1+r,m);return p*r*f/(f-1)}
 function brokenPeriod(p,a,d){return a>0?-(p*(a/100)/360)*d:0}
@@ -139,6 +415,18 @@ function solveRate(amount,sub,days,months,target){
 const isWarn=s=>!(s==='Target reached');
 const short=s=>s.startsWith('0% floor')?'0% floor':s;
 
+function breakup(x){
+ const n=x.months,E=x.emiRounded,bp=Math.round(-x.broken),has=x.rate>0&&bp>0,r=x.rate/1200;
+ let bal=Number(document.getElementById('amount').value),rows='',ta=0,ti=0,tp=0,no=1;
+ const row=(cls,type,a,i,p)=>{rows+=`<tr class="${cls}"><td>${no++}${cls?' <small>BP</small>':''}</td><td>${whole(a)}</td><td>${whole(i)}</td><td>${whole(p)}</td><td>${whole(bal)}</td></tr>`;ta+=a;ti+=i;tp+=p};
+ if(has)row('bp','Broken-period interest',bp,bp,0);
+ for(let k=1;k<=n;k++){let i=bal*r,p=E-i;if(k===n){if(bal<=E){p=bal;i=E-p}else{i=Math.max(0,i);p=E-i}bal=0}else bal-=p;row('','EMI '+k,E,i,p)}
+ return `<div class="bkw"><table class="bk"><thead><tr><th>No.</th><th>Amount ₹</th><th>Interest ₹</th><th>Principal ₹</th><th>Balance ₹</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td>Total</td><td>${whole(ta)}</td><td>${whole(ti)}</td><td>${whole(tp)}</td><td></td></tr></tfoot></table></div>`;
+}
+function sched(x){
+ const n=x.months,bp=Math.round(-x.broken),has=x.rate>0&&bp>0,days=document.getElementById('days').value;
+ return `<div class="sch"><div class="sh">Full break-up: ${n} months</div><div class="ss">${has?`${n+1} payments. Payment 1 is the broken-period interest (${days} days at ${pct(x.rate)}), then the ${n} EMIs start.`:`No broken-period interest, so the ${n} EMIs start at payment 1.`}</div>${breakup(x)}</div>`;
+}
 function calculate(){
  const amount=Number($('amount').value),subv=Number($('subvention').value),target=Number($('target').value),days=Number($('days').value);
  if(!($('amount').value&&$('subvention').value&&$('target').value&&$('days').value)||!(amount>0)||subv<0||target<0||days<0){
@@ -152,26 +440,25 @@ function calculate(){
  $('out').hidden=false;render();
 }
 function render(){
- $('chips').innerHTML=data.map(x=>`<button class="chip" data-m="${x.months}" aria-pressed="${x.months===sel}">${x.months} mo</button>`).join('');
+ drawExtra();
+ $('chips').innerHTML=data.map(x=>`<button class="chip" data-m="${x.months}" aria-pressed="${x.months===sel}"><i class="dot" style="background:${tc(x.months)}"></i>${x.months} mo</button>`).join('');
  const x=data.find(d=>d.months===sel)||data[0];
- $('hero').innerHTML=`<div class="lbl">Monthly EMI for ${x.months} months</div>
+ $('hero').innerHTML=`<div class="lbl">${ic('cal')}Monthly EMI for ${x.months} months</div>
   <div class="big">₹${whole(x.emiRounded)}<small> / month</small></div>
   <span class="pill ${isWarn(x.status)?'warn':''}">${x.status}</span>
   <div class="facts">
-   <div><span>Customer rate</span><b>${pct(x.rate)}</b></div>
-   <div><span>Achieved NJC IRR</span><b>${pct(x.achieved)}</b></div>
-   <div><span>Total repayment</span><b>₹${whole(x.total)}</b></div>
-   <div><span>Total interest</span><b>₹${whole(x.interest)}</b></div>
-   <div><span>Broken-period cash flow</span><b>₹${whole(x.broken)}</b></div>
+   <div><span>${ic('pct')}Customer rate</span><b>${pct(x.rate)}</b></div>
+   <div><span>${ic('tgt')}Achieved NJC IRR</span><b>${pct(x.achieved)}</b></div>
+   <div><span>${ic('wal')}Total repayment</span><b>₹${whole(x.total)}</b></div>
+   <div><span>${ic('up')}Total interest</span><b>₹${whole(x.interest)}</b></div>
+   <div><span>${ic('clk')}Broken-period cash flow</span><b>₹${whole(x.broken)}</b></div>
   </div>`;
  const mx=Math.max(...data.map(d=>d.emiRounded));
- $('chart').innerHTML=data.map(d=>`<tr class="${d.months===sel?'on':''}"><td>${d.months} months</td><td>${pct(d.rate)}</td><td>₹${whole(d.emiRounded)}<span class="bar" style="width:${Math.max(4,d.emiRounded/mx*100)}%"></span></td><td>₹${whole(d.total)}</td></tr>`).join('');
- $('list').innerHTML=data.map(d=>`<button class="row" data-m="${d.months}" aria-pressed="${d.months===sel}">
-  <span class="t">${d.months} mo</span>
-  <span><span class="e">₹${whole(d.emiRounded)}</span><br><span class="m">${pct(d.rate)} customer · IRR ${pct(d.achieved)}</span></span>
-  <span class="s ${isWarn(d.status)?'warn':''}">${short(d.status)}</span></button>`).join('');
+ $('chart').innerHTML=data.map(d=>`<tr class="cr ${d.months===sel?'on':''}" data-c="${d.months}"><td><i class="dot" style="background:${tc(d.months)}"></i>${openM===d.months?'▾':'▸'} ${d.months} months</td><td>₹${whole(d.emiRounded)}<span class="bar" style="width:${Math.max(4,d.emiRounded/mx*100)}%;background:${tc(d.months)}"></span></td><td>${pct(d.rate)}</td><td>₹${whole(d.total)}</td></tr>`+(openM===d.months?`<tr class="xp"><td colspan="4">${sched(d)}</td></tr>`:'')).join('');
+ $('list').innerHTML='<div class="row rowh"><span>Tenure</span><span>EMI</span><span>Rate</span><span>IRR</span><span>Status</span></div>'+data.map(d=>`<button class="row" data-m="${d.months}" aria-pressed="${d.months===sel}"><span class="t"><i class="dot" style="background:${tc(d.months)}"></i>${d.months} mo</span><span class="e">₹${whole(d.emiRounded)}</span><span class="m">${pct(d.rate)}</span><span class="m">${pct(d.achieved)}</span><span class="s ${isWarn(d.status)?'warn':''}">${short(d.status)}</span></button>`).join('');
 }
-document.addEventListener('click',e=>{const b=e.target.closest('[data-m]');if(b){sel=+b.dataset.m;render()}});
+document.addEventListener('click',e=>{const c=e.target.closest('[data-c]');if(c){const m=+c.dataset.c;openM=openM===m?null:m;sel=m;render();return}
+ const b=e.target.closest('[data-m]');if(b){sel=+b.dataset.m;render()}});
 ['amount','subvention','target','days'].forEach(id=>$(id).addEventListener('input',calculate));
 calculate();
 </script>
