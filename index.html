@@ -203,6 +203,7 @@ summary{font-family:var(--disp)}
 .dl.on{fill:var(--ink);font-weight:700}
 .ro{margin-top:8px;font-size:13px;color:var(--mute)}
 .ro b{color:var(--ink)}
+.ro .cmp{margin-top:7px;padding-top:7px;border-top:1px solid var(--line);color:var(--ink)}
 .k3{background:var(--pc)}
 .k4{background:var(--gold)}
 
@@ -296,6 +297,36 @@ details ol{color:var(--mute)}
  #out>section:nth-of-type(6){grid-column:1/-1;grid-row:6}
 }
 </style>
+<style>
+:root[data-theme=light]{--ink:#10203a;--paper:#f2f5fa;--card:#fff;--line:#d9e1ee;--mute:#5c6c88;--chip:#e6ecf6;--blue:#0891b2;--teal:#0891b2;--acc:#0891b2;--pc:#0891b2;--gold:#d98a00;--amber:#d9631a;--warn:#d9631a}
+:root[data-theme=light] body{background:#f2f5fa}
+:root[data-theme=light] .top h1{color:var(--ink);-webkit-text-fill-color:var(--ink)}
+:root[data-theme=light] .top{background:#fff;box-shadow:0 1px 0 var(--line)}
+:root[data-theme=light] .field,:root[data-theme=light] .tabs,:root[data-theme=light] .stats div,:root[data-theme=light] .tl input,:root[data-theme=light] .tl select{background:#eef2f9}
+:root[data-theme=light] .hero{--ink:#e9f0ff;--mute:#a9b8d8;color:#e9f0ff}
+.tbtn{margin-left:auto;flex:none;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:999px;width:40px;height:40px;font-size:18px;cursor:pointer}
+#aw{display:block;font-size:12px;color:var(--mute);margin:4px 2px 0;min-height:16px}
+.pre{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:12px;font-size:12px;color:var(--mute)}
+.pre b{font-weight:600;min-width:74px}
+.pre button,.tl button{border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:999px;padding:6px 12px;font-weight:600;font-size:12.5px;font-family:inherit;cursor:pointer}
+.pre button.on{background:var(--gold);color:#1a1200;border-color:transparent}
+.tl{margin-bottom:12px}
+.tl h2{margin:0 0 10px}
+.tl .sub2{font-size:12px;color:var(--mute);margin:-4px 0 8px}
+.tl pre{white-space:pre-wrap;font-size:13px;line-height:1.55;font-family:inherit;background:var(--chip);border-radius:12px;padding:12px;margin:0 0 10px;color:var(--ink)}
+.tl .bt2{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.tl input,.tl select{border:1px solid var(--line);background:#0a1220;color:var(--ink);border-radius:10px;padding:9px 10px;font-weight:600;font-size:15px;font-family:inherit;min-width:0}
+.tl table{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}
+.tl th,.tl td{padding:7px 4px;text-align:right;border-bottom:1px solid var(--line)}
+.tl th:first-child,.tl td:first-child{text-align:left;color:var(--mute)}
+.sv{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px}
+.sv button{padding:5px 10px}
+.tl .ok{color:var(--teal);font-weight:650;font-size:13px}
+#shm{position:fixed;inset:0;background:rgba(0,0,0,.72);display:grid;place-items:center;z-index:50;padding:14px}
+#shm[hidden]{display:none}
+.shb{background:var(--card);border-radius:16px;padding:12px;max-width:420px;width:100%;max-height:92vh;overflow:auto}
+#shi{width:100%;display:block;border-radius:10px;margin-bottom:8px}
+</style>
 </head>
 <body>
 <header class="top"><div class="topin"><span class="logo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12M6 9h12M6 4c6 0 8 2 8 5s-3 5-8 5l7 6"/></svg></span><div><h1>NJ EMI Store – IRR calculator</h1><p class="sub">Customer EMI for each tenure, solved to your target NJC IRR.</p></div></div></header>
@@ -328,7 +359,7 @@ details ol{color:var(--mute)}
 <li>Subvention excluding GST = amount × (subvention % ÷ 118%).</li>
 <li>Net initial outflow to NJC = amount − net subvention receipt. Brokerage is ₹0 because the workbook's brokerage cells are blank.</li>
 <li>EMI uses the PMT-equivalent reducing-balance formula with customer annual rate ÷ 12.</li>
-<li>Broken period = −(amount × customer rate ÷ 100 ÷ 360) × days. It counts as a cash-flow period only when the customer rate is above 0%.</li>
+<li>Broken period = −(amount × customer rate ÷ 100 ÷ 360) × days. It counts as a cash-flow period only when the customer rate is above 0% and the days are above 0.</li>
 <li>Achieved IRR uses the initial outflow, the broken-period flow when it applies, and the EMI flows, then annualises monthly IRR × 12.</li>
 <li>If the target is already met at a 0% customer rate, the rate stays at 0% and the row is flagged. The rate never goes negative.</li>
 </ol>
@@ -358,14 +389,22 @@ function drawBars(){
  const vals=data.map(d=>tab==='emi'?d.emiRounded:tab==='int'?I(d):A+I(d));
  const st=niceStep(Math.max(...vals)),top=st*4,y=v=>T+ph-v/top*ph,hh=v=>v/top*ph,cx=i=>L+sw*i+sw/2,bw=Math.min(20,sw*.68);
  const lab=(i,v,yy,on)=>`<text transform="rotate(-90 ${cx(i)+3.4} ${yy})" x="${cx(i)+3.4}" y="${yy}" class="dl${on?' on':''}">${whole(v)}</text>`;
- let g='';
+ let g='',Hs=H;
  for(let k=0;k<=4;k++){const v=st*k;g+=`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" class="gl0"/><text x="${L-5}" y="${y(v)+3}" class="yl">${k?'₹'+kfmt(v):'0'}</text>`}
- data.forEach((d,i)=>{g+=`<text x="${cx(i)}" y="${H-B+14}" class="xl${d.months===sel?' on':''}">${d.months}</text>`});
+ if(tab!=='emi')data.forEach((d,i)=>{g+=`<text x="${cx(i)}" y="${H-B+14}" class="xl${d.months===sel?' on':''}">${d.months}</text>`});
  g+=`<text x="${L+pw/2}" y="${H-4}" class="xt">Tenure in months</text>`;
  const si=data.findIndex(d=>d.months===sel),sd=data[si]||data[0];
  if(tab==='emi'){
-  data.forEach((d,i)=>{g+=`<rect x="${cx(i)-bw/2}" y="${y(d.emiRounded)}" width="${bw}" height="${hh(d.emiRounded)}" rx="3" fill="${tc(d.months)}" opacity="${d.months===sel?1:.6}"${d.months===sel?' stroke="var(--ink)" stroke-width="1.5"':''}/>`});
-  data.forEach((d,i)=>{g+=lab(i,d.emiRounded,y(d.emiRounded)-5,d.months===sel)});
+  g='';const rh=25,t0=4,lx=54,mx=Math.max(...vals)||1,bwid=W-lx-96;
+  Hs=t0+n*rh+22;
+  const len=v=>Math.max(3,Math.sqrt(v/mx)*bwid);
+  data.forEach((d,i)=>{const on=d.months===sel,yy=t0+i*rh,bl=len(d.emiRounded),cy=yy+rh/2+4;
+   g+=`<rect x="0" y="${yy}" width="${W}" height="${rh}" rx="7" fill="${on?'var(--chip)':'transparent'}"/>`+
+   `<text x="${lx-9}" y="${cy}" class="xl${on?' on':''}" style="font-size:12px;text-anchor:end">${d.months} mo</text>`+
+   `<rect x="${lx}" y="${yy+5}" width="${bl}" height="${rh-10}" rx="3" fill="${on?'var(--gold)':'var(--acc)'}" opacity="${on?1:.5}"/>`+
+   `<text x="${lx+bl+6}" y="${cy}" class="dl${on?' on':''}" style="font-size:12px">₹${whole(d.emiRounded)}</text>`+
+   `<rect x="0" y="${yy}" width="${W}" height="${rh}" fill="transparent" data-m="${d.months}" class="hit"/>`});
+  g+=`<text x="${lx}" y="${Hs-7}" class="xt" style="text-anchor:start">Bar length uses a square-root scale</text>`;
  }else if(tab==='int'){
   const pts=data.map((d,i)=>`${cx(i)},${y(I(d))}`);
   g+=`<path d="M${cx(0)},${y(0)} L${pts.join(' L')} L${cx(n-1)},${y(0)} Z" fill="var(--gold)" opacity=".2"/><polyline points="${pts.join(' ')}" fill="none" stroke="var(--gold)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
@@ -375,10 +414,10 @@ function drawBars(){
   data.forEach((d,i)=>{const on=d.months===sel,o=on?1:.7;g+=`<rect x="${cx(i)-bw/2}" y="${y(A)}" width="${bw}" height="${hh(A)}" fill="var(--pc)" opacity="${o}"/><rect x="${cx(i)-bw/2}" y="${y(A+I(d))}" width="${bw}" height="${hh(I(d))}" fill="var(--gold)" opacity="${o}"/>`+(on?`<rect x="${cx(i)-bw/2-1}" y="${y(A+I(d))-1}" width="${bw+2}" height="${hh(A+I(d))+2}" fill="none" stroke="var(--ink)" stroke-width="1.5" rx="2"/>`:'')});
   data.forEach((d,i)=>{g+=lab(i,A+I(d),y(A+I(d))-5,d.months===sel)});
  }
- data.forEach((d,i)=>{g+=`<rect x="${L+sw*i}" y="${T-10}" width="${sw}" height="${ph+B+10}" fill="transparent" data-m="${d.months}" class="hit"/>`});
- const T_={emi:['Monthly EMI by tenure','<span><i class="k1"></i>Bar colour shows tenure, short to long</span>',`<b>${sd.months} months:</b> ₹${whole(sd.emiRounded)} per month`],int:['Interest paid by tenure','<span><i class="k4"></i>Total interest over the loan</span>',`<b>${sd.months} months:</b> ₹${whole(I(sd))} interest in total`],split:['Principal and interest by tenure','<span><i class="k3"></i>Principal</span><span><i class="k4"></i>Interest</span>',`<b>${sd.months} months:</b> ₹${whole(A)} principal + ₹${whole(I(sd))} interest`]}[tab];
+ if(tab!=='emi')data.forEach((d,i)=>{g+=`<rect x="${L+sw*i}" y="${T-10}" width="${sw}" height="${ph+B+10}" fill="transparent" data-m="${d.months}" class="hit"/>`});
+ const T_={emi:['Monthly EMI by tenure','<span><i class="k4"></i>Selected tenure is highlighted. Bar length uses a square-root scale so small EMIs stay visible</span>',(()=>{const sh=data[si-1],lo=data[si+1];let h=`<b>${sd.months} months:</b> EMI ₹${whole(sd.emiRounded)} per month, ₹${whole(I(sd))} interest in total.`;if(sh){const d=I(sd)-I(sh);h+=`<div class="cmp"><b>Shorter, ${sh.months} mo:</b> EMI ₹${whole(sh.emiRounded-sd.emiRounded)} higher each month, interest ₹${whole(Math.abs(d))} ${d>=0?'less':'more'}</div>`}if(lo){const d=I(lo)-I(sd);h+=`<div class="cmp"><b>Longer, ${lo.months} mo:</b> EMI ₹${whole(sd.emiRounded-lo.emiRounded)} lower each month, interest ₹${whole(Math.abs(d))} ${d>=0?'more':'less'}</div>`}return h})()],int:['Interest paid by tenure','<span><i class="k4"></i>Total interest over the loan</span>',`<b>${sd.months} months:</b> ₹${whole(I(sd))} interest in total`],split:['Principal and interest by tenure','<span><i class="k3"></i>Principal</span><span><i class="k4"></i>Interest</span>',`<b>${sd.months} months:</b> ₹${whole(A)} principal + ₹${whole(I(sd))} interest`]}[tab];
  const tabs=[['emi','bar','EMI'],['int','line','Interest'],['split','stack','Split']].map(t=>`<button role="tab" data-tab="${t[0]}" aria-selected="${tab===t[0]}">${ic(t[1])}${t[2]}</button>`).join('');
- $('bars').innerHTML=`<h2>${T_[0]}</h2><div class="tabs" role="tablist">${tabs}</div><div class="keys">${T_[1]}</div><svg class="cg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${T_[0]}">${g}</svg><div class="ro">${T_[2]}</div>`;
+ $('bars').innerHTML=`<h2>${T_[0]}</h2><div class="tabs" role="tablist">${tabs}</div><div class="keys">${T_[1]}</div><svg class="cg" viewBox="0 0 ${W} ${Hs}" role="img" aria-label="${T_[0]}">${g}</svg><div class="ro">${T_[2]}</div>`;
 }
 document.addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(b){tab=b.dataset.tab;drawBars()}});
 
@@ -397,7 +436,7 @@ function monthlyIRR(flows){
 }
 function evaluate(amount,sub,days,months,rate){
  const e=emi(amount,rate,months),broken=brokenPeriod(amount,rate,days),flows=[amount-sub];
- if(rate>0)flows.push(broken);
+ if(rate>0&&days>0)flows.push(broken);
  for(let i=0;i<months;i++)flows.push(-e);
  const er=Math.round(e);
  return{months,rate,emiRounded:er,total:er*months,interest:er*months-amount,broken,achieved:monthlyIRR(flows)*12*100};
@@ -431,8 +470,8 @@ function sched(x){
 }
 function calculate(){
  const amount=Number($('amount').value),subv=Number($('subvention').value),target=Number($('target').value),days=Number($('days').value);
- if(!($('amount').value&&$('subvention').value&&$('target').value&&$('days').value)||!(amount>0)||subv<0||target<0||days<0){
-  $('err').textContent='Enter an amount above 0, and 0 or more for subvention, target IRR and days.';
+ if(!($('amount').value&&$('target').value)||!(amount>0)||subv<0||target<0||days<0){
+  $('err').textContent='Enter a loan amount above 0 and a target IRR. Subvention and days can be 0 or left blank.';
   $('out').hidden=true;return;
  }
  $('err').textContent='';
@@ -463,6 +502,82 @@ document.addEventListener('click',e=>{const c=e.target.closest('[data-c]');if(c)
  const b=e.target.closest('[data-m]');if(b){sel=+b.dataset.m;render()}});
 ['amount','subvention','target','days'].forEach(id=>$(id).addEventListener('input',calculate));
 calculate();
+</script>
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const sv=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}},ld=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
+const root=document.documentElement;
+const setT=t=>{root.setAttribute('data-theme',t);$('theme').textContent=t==='light'?'☾':'☀'};
+const tb=document.createElement('button');tb.id='theme';tb.className='tbtn';tb.setAttribute('aria-label','Switch day or night mode');
+document.querySelector('.topin').appendChild(tb);
+tb.onclick=()=>{const n=root.getAttribute('data-theme')==='light'?'dark':'light';setT(n);sv('theme',n)};
+setT(ld('theme')||((window.matchMedia&&matchMedia('(prefers-color-scheme: light)').matches)?'light':'dark'));
+const words=n=>!(n>0)?'':n>=1e7?+(n/1e7).toFixed(2)+' crore':n>=1e5?+(n/1e5).toFixed(2)+' lakh':n>=1e3?+(n/1e3).toFixed(2)+' thousand':'';
+const am=$('amount'),aw=document.createElement('small');aw.id='aw';
+(am.closest('.field')||am.parentElement).insertAdjacentElement('afterend',aw);
+const setV=(id,v)=>{$(id).value=v;$(id).dispatchEvent(new Event('input'))};
+const pre=document.createElement('div');
+(am.closest('.inputs')||am.parentElement).insertAdjacentElement('afterend',pre);
+const row=(lab,id,vals)=>{const d=document.createElement('div');d.className='pre';d.innerHTML='<b>'+lab+'</b>';vals.forEach(v=>{const b=document.createElement('button');b.type='button';b.textContent=v+'%';b.onclick=()=>setV(id,v);d.appendChild(b)});pre.appendChild(d)};
+const rs=document.createElement('div');rs.className='pre';rs.innerHTML='<button type="button" id="rst">Reset all inputs</button>';pre.appendChild(rs);
+$('rst').onclick=()=>{setV('amount',35875);setV('subvention',2.5);setV('target',12);setV('days',16)};
+const tools=document.createElement('section');tools.id='tools';tools.className='panel';tools.style.gridColumn='1/-1';
+tools.innerHTML=`<div class="tl"><h2>Quote summary</h2><pre id="qt"></pre><div class="bt2"><button id="qc">Copy</button><button id="qh">Share</button><button id="qs2">Save quote</button><span class="ok" id="qm"></span></div></div>
+<div class="tl"><h2>Compare two tenures</h2><div class="bt2"><select id="ca"></select><span>vs</span><select id="cb"></select></div><div id="cr"></div></div>
+<div class="tl"><h2>Customer budget</h2><p class="sub2">Type the EMI the customer can afford each month.</p><div class="bt2"><input id="bg" type="number" inputmode="numeric" placeholder="₹ per month"></div><p id="bgr" class="ok" style="margin:10px 0 0"></p></div>
+<div class="tl" style="margin:0"><h2>Saved quotes</h2><div id="sl"></div></div>`;
+$('out').appendChild(tools);
+const sel2=[$('ca'),$('cb')];sel2.forEach(e=>{tenures.forEach(m=>e.add(new Option(m+' months',m)));e.onchange=cmp});
+$('ca').value=12;$('cb').value=24;
+const cur=()=>data.find(d=>d.months===sel)||data[0];
+const msg=t=>{$('qm').textContent=t;setTimeout(()=>$('qm').textContent='',1600)};
+const cp=t=>{const done=()=>msg('Copied');const fb=()=>{const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');done()}catch(e){msg('Copy failed')}a.remove()};try{navigator.clipboard.writeText(t).then(done,fb)}catch(e){fb()}};
+const qtext=()=>{const x=cur(),A=Number($('amount').value),bp=Math.round(-x.broken),has=x.rate>0&&bp>0;
+ return 'NJ EMI Store quote\nLoan amount: ₹'+whole(A)+' ('+words(A)+')\nTenure: '+x.months+' months\nInterest rate: '+pct(x.rate)+'\n'+(has?'1st payment (broken-period interest): ₹'+whole(bp)+'\nThen '+x.months+' EMIs of: ₹'+whole(x.emiRounded):'Monthly EMI: ₹'+whole(x.emiRounded)+' x '+x.months)+'\nTotal EMIs: ₹'+whole(x.total)+'\nTotal interest: ₹'+whole(x.interest)+(has?'\nTotal with broken-period interest: ₹'+whole(x.total+bp):'')};
+$('qc').onclick=()=>cp(qtext());
+$('qh').onclick=()=>{const t=qtext();if(navigator.share)navigator.share({text:t}).catch(()=>{});else cp(t)};
+const store=()=>{try{return JSON.parse(ld('njq')||'[]')}catch(e){return[]}};
+const list=()=>{const q=store();$('sl').innerHTML=q.length?q.map((r,i)=>`<div class="sv"><span>${r.n}</span><span><button data-o="${i}">Open</button> <button data-x="${i}">✕</button></span></div>`).join(''):'<p class="sub2" style="margin:0">No saved quotes yet.</p>'};
+$('qs2').onclick=()=>{const q=store(),A=Number($('amount').value),d=new Date();q.unshift({n:'₹'+whole(A)+' · '+sel+' mo · '+d.getDate()+'/'+(d.getMonth()+1)+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'),a:$('amount').value,s:$('subvention').value,t:$('target').value,d:$('days').value,m:sel});sv('njq',JSON.stringify(q.slice(0,20)));list();msg('Saved')};
+$('sl').onclick=e=>{const o=e.target.dataset.o,x=e.target.dataset.x,q=store();if(o!=null){const r=q[o];$('subvention').value=r.s;$('target').value=r.t;$('days').value=r.d;sel=r.m;setV('amount',r.a)}if(x!=null){q.splice(x,1);sv('njq',JSON.stringify(q));list()}};
+function cmp(){const a=data.find(d=>d.months==$('ca').value),b=data.find(d=>d.months==$('cb').value);if(!a||!b)return;
+ const r=(l,f,k)=>`<tr><td>${l}</td><td>${f(a[k])}</td><td>${f(b[k])}</td><td>${k==='rate'?(b[k]-a[k]>=0?'+':'−')+Math.abs(b[k]-a[k]).toFixed(2)+'%':(b[k]-a[k]>=0?'+':'−')+'₹'+whole(Math.abs(b[k]-a[k]))}</td></tr>`;
+ const m=v=>'₹'+whole(v);$('cr').innerHTML='<table><tr><th></th><th>'+a.months+' mo</th><th>'+b.months+' mo</th><th>Change</th></tr>'+r('Rate',pct,'rate')+r('EMI',m,'emiRounded')+r('Total paid',m,'total')+r('Interest',m,'interest')+'</table>'}
+function bud(){const v=Number($('bg').value),el=$('bgr');if(!(v>0)){el.textContent='';return}
+ const f=data.filter(d=>d.emiRounded<=v);el.textContent=f.length?'Fits from '+f[0].months+' months ('+f.length+' of '+data.length+' tenures). EMI at '+f[0].months+' mo: ₹'+whole(f[0].emiRounded):'No tenure fits. The lowest EMI is ₹'+whole(data[data.length-1].emiRounded)+' at '+data[data.length-1].months+' months.'}
+$('bg').addEventListener('input',bud);
+window.updTools=function(){if(!data.length)return;const A=Number($('amount').value);aw.textContent=words(A)?'= ₹'+words(A):'';
+ const r=cur();$('qt').textContent=qtext();cmp();bud();
+ document.querySelectorAll('.pre button:not(#rst)').forEach(b=>{const id=b.parentNode.firstChild.textContent==='Target IRR'?'target':'subvention';b.classList.toggle('on',Number($(id).value)===parseFloat(b.textContent))})};
+const _d=drawExtra;drawExtra=function(){_d();updTools()};
+const qi=document.createElement('button');qi.id='qi';qi.textContent='Share image';$('qh').insertAdjacentElement('afterend',qi);
+const mo=document.createElement('div');mo.id='shm';mo.hidden=true;
+mo.innerHTML='<div class="shb"><img id="shi" alt="Quote image"><p class="sub2" id="shn">Press and hold the image to save it, or tap Share.</p><div class="bt2"><button id="shs">Share</button><button id="shx">Close</button></div></div>';
+document.body.appendChild(mo);
+let shc=null;
+function qimg(){const x=cur(),A=Number($('amount').value),bp=Math.round(-x.broken),has=x.rate>0&&bp>0,c=document.createElement('canvas');
+ c.width=720;c.height=has?930:860;const g=c.getContext('2d'),F='system-ui,-apple-system,Segoe UI,Roboto,sans-serif';
+ g.fillStyle='#fff';g.fillRect(0,0,720,c.height);
+ const gr=g.createLinearGradient(0,0,720,0);gr.addColorStop(0,'#1a1260');gr.addColorStop(1,'#0e7490');g.fillStyle=gr;g.fillRect(0,0,720,150);
+ g.fillStyle='#fff';g.font='700 38px '+F;g.fillText('NJ EMI Store',40,70);g.globalAlpha=.8;g.font='500 24px '+F;g.fillText('EMI quote',40,110);g.globalAlpha=1;
+ g.fillStyle='#64748b';g.font='500 24px '+F;g.fillText('Monthly EMI for '+x.months+' months',40,215);
+ g.fillStyle='#0f172a';g.font='800 84px '+F;g.fillText('₹'+whole(x.emiRounded),40,305);
+ let y=385;const row=(l,v,w)=>{g.strokeStyle='#e2e8f0';g.lineWidth=2;g.beginPath();g.moveTo(40,y-42);g.lineTo(680,y-42);g.stroke();
+  g.textAlign='left';g.fillStyle='#64748b';g.font='500 25px '+F;g.fillText(l,40,y);
+  g.textAlign='right';g.fillStyle=w?'#b45309':'#0f172a';g.font='700 28px '+F;g.fillText(v,680,y);y+=72};
+ row('Loan amount','₹'+whole(A));row('Tenure',x.months+' months');row('Interest rate',pct(x.rate)+' p.a.');
+ if(has)row('1st payment: broken-period interest','₹'+whole(bp),1);
+ row(x.months+' EMIs of','₹'+whole(x.emiRounded));row('Total of EMIs','₹'+whole(x.total));row('Total interest','₹'+whole(x.interest));
+ const d=new Date();g.textAlign='left';g.fillStyle='#94a3b8';g.font='500 22px '+F;
+ g.fillText(d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear()+'  ·  Indicative quote',40,c.height-36);return c}
+qi.onclick=()=>{if(!data.length)return;shc=qimg();$('shi').src=shc.toDataURL('image/png');$('shn').textContent='Press and hold the image to save it, or tap Share.';mo.hidden=false};
+$('shx').onclick=()=>{mo.hidden=true};
+mo.onclick=e=>{if(e.target===mo)mo.hidden=true};
+$('shs').onclick=()=>{if(!shc)return;shc.toBlob(b=>{try{const f=new File([b],'emi-quote.png',{type:'image/png'});
+ if(navigator.canShare&&navigator.canShare({files:[f]}))navigator.share({files:[f]}).catch(()=>{});else $('shn').textContent='Sharing is not available here. Press and hold the image to save it.'}catch(e){$('shn').textContent='Press and hold the image to save it.'}},'image/png')};
+list();updTools();
+})();
 </script>
 </body>
 </html>
