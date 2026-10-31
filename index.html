@@ -3,427 +3,171 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>NJ EMI Store – IRR Calculator</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>NJ EMI Store</title>
 <style>
-:root{--ink:#0e1a2e;--paper:#eef2f7;--card:#fff;--line:#d9e1ec;--mute:#5d6c84;--blue:#2d5be3;--teal:#00967f;--amber:#b45f06;--hero:#0e1a2e;--herotext:#fff;--chip:#e3eaf5}
-@media(prefers-color-scheme:dark){:root{--ink:#e8eef8;--paper:#0a1220;--card:#121d31;--line:#243350;--mute:#95a5c0;--blue:#7ea0ff;--teal:#2fd1b3;--amber:#f0a84a;--hero:#1b2b4a;--chip:#1a2942}}
+:root{--bg:#080e1c;--card:#0f1930;--card2:#0b1224;--line:#1b2a4a;--ink:#e8eefc;--mute:#8a99bb;--acc:#22d3ee;--gold:#fbbf24;--chip:#16233f;--good:#34d399;--bad:#fb7185;--on:#04121c}
+:root[data-theme=light]{--bg:#eef2f9;--card:#fff;--card2:#f4f7fc;--line:#d8e1ef;--ink:#0f1c36;--mute:#5a6b8c;--acc:#0891b2;--gold:#d97706;--chip:#e5ecf7;--good:#15803d;--bad:#dc2626;--on:#fff}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-variant-numeric:tabular-nums}
-main{max-width:720px;margin:auto;padding:14px 14px 40px}
-h1{font-size:20px;margin:6px 2px 2px;letter-spacing:-.01em}
-.sub{margin:0 2px 14px;color:var(--mute);font-size:13px}
-.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:14px}
-.inputs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.inputs .wide{grid-column:1/-1}
-label{display:block;font-size:12px;color:var(--mute);margin-bottom:4px}
-.field{display:flex;align-items:center;border:1px solid var(--line);border-radius:10px;background:var(--paper);padding:0 10px}
-.field:focus-within{border-color:var(--blue);box-shadow:0 0 0 3px color-mix(in srgb,var(--blue) 22%,transparent)}
-.field i{font-style:normal;color:var(--mute);font-size:14px}
-input{width:100%;border:0;background:transparent;color:var(--ink);font:600 17px system-ui,sans-serif;padding:11px 4px;outline:none;min-width:0}
-#err{color:var(--amber);font-size:13px;margin:10px 0 0;min-height:0}
-.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 12px;scrollbar-width:none}
-.chips::-webkit-scrollbar{display:none}
-.chip{flex:none;border:0;background:var(--chip);color:var(--ink);font:600 14px system-ui,sans-serif;padding:9px 14px;border-radius:999px;cursor:pointer}
-.chip[aria-pressed=true]{background:var(--blue);color:#fff}
-.hero{background:var(--hero);color:var(--herotext);border-radius:16px;padding:18px 18px 8px;margin-bottom:14px}
-.hero .lbl{font-size:13px;opacity:.75}
-.hero .big{font-size:44px;font-weight:750;letter-spacing:-.02em;line-height:1.1;margin:2px 0 4px}
-.hero .big small{font-size:15px;font-weight:500;opacity:.7;letter-spacing:0}
-.pill{display:inline-block;font-size:12px;font-weight:650;padding:4px 10px;border-radius:999px;background:rgba(0,200,160,.2);color:#6ff0d3}
-.pill.warn{background:rgba(255,170,60,.2);color:#ffc57a}
-.facts{display:grid;grid-template-columns:1fr 1fr;margin-top:14px}
-.facts div{padding:10px 0;border-top:1px solid rgba(255,255,255,.14)}
-.facts div:nth-child(odd){padding-right:10px}
-.facts span{display:block;font-size:12px;opacity:.7}
-.facts b{font-size:16px;font-weight:650}
-h2{font-size:14px;margin:0 0 8px;color:var(--mute);font-weight:650}
-.row{display:grid;grid-template-columns:62px 1fr auto;gap:8px;align-items:center;width:100%;border:0;background:none;color:inherit;text-align:left;font:inherit;padding:11px 4px;border-bottom:1px solid var(--line);cursor:pointer}
-.row:last-child{border-bottom:0}
-.row[aria-pressed=true]{background:var(--chip);border-radius:10px}
-.row .t{font-weight:650}
-.row .e{font-weight:700;font-size:16px}
-.row .m{font-size:12px;color:var(--mute)}
-.row .s{text-align:right;font-size:12px;color:var(--teal);font-weight:650;max-width:120px}
-.row .s.warn{color:var(--amber)}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.stats div{background:var(--paper);border-radius:10px;padding:9px 11px}
-.stats span{display:block;font-size:12px;color:var(--mute)}
-.stats b{font-size:15px}
-.chart{width:100%;table-layout:fixed;border-collapse:collapse}
-.chart th{font-size:12px;color:var(--mute);font-weight:650;text-align:right;padding:6px 6px 8px;border-bottom:2px solid var(--line)}
-.chart td{padding:9px 5px;font-size:13.5px;border-bottom:1px solid var(--line);text-align:right;font-weight:600}
-.chart th:first-child,.chart td:first-child{text-align:left}
-.chart tr.on td{background:var(--chip)}
-.chart tr:last-child td{border-bottom:0}
-.chart tr.cr{cursor:pointer}
-.chart tr.xp td{padding:0 0 14px;text-align:left;font-weight:400;font-size:13px;white-space:normal}
-.chart .sch{margin-top:2px}
-.chart .bk td{font-weight:500}
-.chart .bk td:nth-child(2){font-weight:700}
-.chart .bk tfoot td{font-weight:750}
-.bar{display:block;height:5px;border-radius:3px;background:var(--blue);margin-top:5px;margin-left:auto;opacity:.75}
-details{font-size:13px;color:var(--mute)}
-summary{cursor:pointer;font-weight:650;color:var(--ink);font-size:14px}
-details ol{padding-left:18px;margin:10px 0 0}
-details li{margin-bottom:6px}
-
-.sch{margin-top:12px;text-align:left;white-space:normal}
-.sch .sh{font-weight:700;margin:0 0 2px;color:var(--ink)}
-.sch .ss{color:var(--mute);font-size:12px;margin-bottom:6px}
-.sch .sx{display:grid;grid-template-columns:28px 1fr auto;gap:8px;align-items:center;padding:8px 0;border-top:1px solid var(--line);color:var(--ink)}
-.sch .sx b{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--acc,var(--gold));display:grid;place-items:center;font-size:11px}
-.sch .sx.bp b{border-color:var(--warn)}
-.sch .sx u{text-decoration:none;font-weight:650}
-.sch .sx em{display:block;font-style:normal;color:var(--mute);font-size:11.5px}
-.sch .sx strong{font-weight:750}
-.sch details{padding:0;font-size:inherit;color:inherit}
-.sch summary{cursor:pointer;color:var(--acc,var(--gold));font-weight:650;padding:6px 0;font-size:12.5px}
-.sch .pl{max-height:260px;overflow:auto;border:1px solid var(--line);border-radius:8px}
-.sch .pl div{display:grid;grid-template-columns:30px 1fr auto auto;gap:8px;padding:6px 8px;border-bottom:1px solid var(--line);font-size:12px;color:var(--ink)}
-.sch .pl div:last-child{border:0}
-.sch .pl i{font-style:normal;color:var(--mute);min-width:78px;text-align:right}
-
-.bkw{max-width:100%;overflow-x:auto;overflow-y:auto;max-height:440px;border:1px solid var(--line);border-radius:8px;margin-top:8px;background:transparent}
-.bk{width:100%;min-width:0;border-collapse:collapse;font-size:12px;color:var(--ink);font-variant-numeric:tabular-nums}
-.bk th{position:sticky;top:0;background:var(--card,var(--panel));color:var(--mute);font-size:10.5px;font-weight:650;text-align:right;padding:7px 5px;border-bottom:1px solid var(--line);white-space:nowrap;z-index:1}
-.bk td{text-align:right;padding:7px 5px;border-bottom:1px solid var(--line);white-space:nowrap}
-.bk th:first-child,.bk td:first-child{text-align:left}
-.bk small{font-size:9.5px;font-weight:700;margin-left:2px}
-.bk td:nth-child(2){font-weight:700}
-.bk tr.bp td{color:var(--warn)}
-.bk tfoot td{position:sticky;bottom:0;background:var(--card,var(--panel));font-weight:750;border-top:2px solid var(--line);border-bottom:0}
-
-/* Break-up table: centred, immune to outer .chart td rules */
-.chart tr.xp .bk{table-layout:fixed;width:100%;min-width:320px}
-.chart tr.xp .bk th,.chart tr.xp .bk td{text-align:center;padding:8px 2px;font-size:12px;font-weight:500;white-space:nowrap;color:var(--ink)}
-.chart tr.xp .bk th{font-size:10.5px;font-weight:650;color:var(--mute);padding:7px 2px}
-.chart tr.xp .bk td:nth-child(2){font-weight:700}
-.chart tr.xp .bk tr.bp td{color:var(--warn,var(--amber))}
-.chart tr.xp .bk tfoot td{font-weight:750}
-.chart tr.xp .bk td:first-child,.chart tr.xp .bk th:first-child{text-align:center;width:13%}
-
-/* ===== Design refresh: ledger green + marigold ===== */
-:root{--ink:#14211c;--paper:#eef1ec;--card:#fbfcfa;--line:#d6ddd6;--mute:#5b6d64;--blue:#0e3b31;--teal:#0e6b57;--amber:#b4561b;--warn:#b4561b;--acc:#0e6b57;--gold:#f2b01e;--hero:#0e3b31;--chip:#e2e9e2;--disp:"Sora","Manrope",system-ui,sans-serif}
-@media(prefers-color-scheme:dark){:root{--ink:#e6eee9;--paper:#0b1512;--card:#121e1a;--line:#223630;--mute:#92a69d;--blue:#f2b01e;--teal:#4fd1b0;--amber:#ff9d6b;--warn:#ff9d6b;--acc:#4fd1b0;--hero:#15483b;--chip:#1a2c26}}
-body{font-family:"Manrope",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-main{padding-top:20px}
-h1{font:700 24px/1.15 var(--disp);letter-spacing:-.02em;margin:4px 2px 4px}
-.sub{font-size:13.5px}
-.panel{border-radius:10px;background:var(--card)}
-h2{font:600 14px var(--disp);color:var(--ink);letter-spacing:0}
-label{font-weight:500}
-.field{border-radius:8px;background:var(--paper)}
-.field:focus-within{border-color:var(--teal);box-shadow:0 0 0 3px color-mix(in srgb,var(--teal) 24%,transparent)}
-input{font:600 17px "Manrope",system-ui,sans-serif}
-.chips{gap:6px}
-.chip{border-radius:8px;font:600 14px "Manrope",system-ui,sans-serif;background:var(--chip);transition:background .15s,color .15s}
-.chip[aria-pressed=true]{background:var(--hero);color:var(--gold)}
-@media(prefers-color-scheme:dark){.chip[aria-pressed=true]{background:var(--gold);color:#0b1512}}
-.hero{border-radius:20px;padding:22px 20px 10px;background:var(--hero)}
-.hero .lbl{font-size:13px;opacity:.8}
-.hero .big{font:700 58px/1 var(--disp);letter-spacing:-.035em;color:var(--gold);margin:8px 0 12px}
-.hero .big small{font:500 15px "Manrope",sans-serif;color:#fff;opacity:.7;letter-spacing:0}
-.pill{background:rgba(242,176,30,.18);color:#f7cc62;border-radius:6px}
-.pill.warn{background:rgba(255,255,255,.14);color:#ffc4a6}
-.facts b{font:600 17px var(--disp)}
-.row{border-radius:0;grid-template-columns:58px 1fr auto}
-.row .t{font:600 15px var(--disp)}
-.row .e{font:700 18px var(--disp);letter-spacing:-.01em}
-.row[aria-pressed=true]{background:var(--chip);border-radius:8px;box-shadow:inset 3px 0 0 var(--gold)}
-.row .s{color:var(--teal)}
-.row .s.warn{color:var(--amber)}
-.chart th{color:var(--mute)}
-.chart tr.on td{background:var(--chip)}
-.chart tr.cr td:first-child{font-family:var(--disp);font-weight:600}
-.bar{background:var(--gold);opacity:1;height:4px}
-.stats div{border-radius:8px;background:var(--paper)}
-.stats b{font-family:var(--disp)}
-.chart tr.xp .bk th{background:var(--card)}
-.chart tr.xp .bk tr.bp td{color:var(--amber)}
-.sch .sx.bp b{border-color:var(--amber)}
-summary{font-family:var(--disp)}
-@media(prefers-reduced-motion:reduce){.chip{transition:none}}
-
-/* ===== Icons, tenure colour grading, charts ===== */
-:root{--pc:#0e6b57}
-@media(prefers-color-scheme:dark){:root{--pc:#4fd1b0}}
-.ic{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none;margin-right:7px}
-.hero .lbl,.facts span{display:flex;align-items:center}
-.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:7px;flex:none}
-.chip{display:inline-flex;align-items:center}
-.chip .dot{margin-right:6px}
-.row{grid-template-columns:66px 1fr auto}
-.row .t,.chart tr.cr td:first-child{display:flex;align-items:center}
-.chart tr.cr td:first-child{display:table-cell}
-.dnw{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
-.dn{width:150px;height:150px;flex:none}
-.dn text{fill:var(--ink);text-anchor:middle}
-.dn .d1{font:700 22px var(--disp)}
-.dn .d2{font-size:11px;fill:var(--mute)}
-.lg{flex:1;min-width:160px;display:grid;gap:12px}
-.lg>div{display:flex;align-items:center;gap:10px}
-.lg .sw{width:32px;height:32px;border-radius:8px;display:grid;place-items:center;flex:none}
-.lg .sw .ic{margin:0;width:17px;height:17px}
-.sw.p{background:var(--pc);color:var(--card)}
-.sw.i{background:var(--gold);color:#14211c}
-.sw.t{background:var(--chip);color:var(--ink)}
-.lg b{display:block;font:700 17px var(--disp);line-height:1.15}
-.lg .l{font-size:12px;color:var(--mute)}
-.keys{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--mute);margin:0 0 6px;align-items:center}
-.keys span{display:inline-flex;align-items:center;gap:6px}
-.keys i{width:14px;height:8px;border-radius:2px;display:inline-block}
-.k1{background:linear-gradient(90deg,hsl(165 62% 46%),hsl(15 62% 46%))}
-.k2{background:repeating-linear-gradient(135deg,var(--gold) 0 3px,color-mix(in srgb,var(--gold) 50%,transparent) 3px 6px)}
-.bgl{display:grid;grid-template-columns:54px 1fr;gap:8px;align-items:center;width:100%;border:0;background:none;color:inherit;text-align:left;font:inherit;padding:7px 6px;border-radius:8px;cursor:pointer}
-.bgl[aria-pressed=true]{background:var(--chip)}
-.bgl .bt{font:600 13px var(--disp);display:flex;align-items:center}
-.bb>div{display:flex;align-items:center;gap:6px;height:15px}
-.bb i{display:block;height:10px;border-radius:0 5px 5px 0;min-width:2px}
-.bb em{font-style:normal;font-size:11.5px;font-weight:600;color:var(--mute);white-space:nowrap}
-.b2 i{background:repeating-linear-gradient(135deg,var(--gold) 0 4px,color-mix(in srgb,var(--gold) 50%,transparent) 4px 8px)}
-.grad{height:6px;border-radius:3px;margin:12px 0 4px;background:linear-gradient(90deg,hsl(165 62% 46%),hsl(90 62% 46%),hsl(15 62% 46%))}
-.gl{display:flex;justify-content:space-between;font-size:11px;color:var(--mute)}
-
-/* ===== Chart tabs ===== */
-.tabs{display:flex;gap:4px;background:var(--chip);padding:4px;border-radius:10px;margin:0 0 12px}
-.tabs button{flex:1;border:0;background:none;color:var(--mute);font:600 13px "Manrope",system-ui,sans-serif;padding:8px 6px;border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer}
-.tabs button[aria-selected=true]{background:var(--card);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.14)}
-.tabs .ic{margin-right:6px}
-.cg{width:100%;height:auto;display:block}
-.gl0{stroke:var(--line);stroke-width:1}
-.yl{font-size:9.5px;fill:var(--mute);text-anchor:end}
-.xl{font-size:10px;fill:var(--mute);text-anchor:middle}
-.xl.on{fill:var(--ink);font-weight:700}
-.xt{font-size:10px;fill:var(--mute);text-anchor:middle}
-.vl{font:700 11px var(--disp);fill:var(--ink);text-anchor:middle}
-.hit{cursor:pointer}
-.dl{font:600 9.5px var(--disp);fill:var(--mute);text-anchor:start;pointer-events:none}
-.dl.on{fill:var(--ink);font-weight:700}
-.ro{margin-top:8px;font-size:13px;color:var(--mute)}
-.ro b{color:var(--ink)}
-.ro .cmp{margin-top:7px;padding-top:7px;border-top:1px solid var(--line);color:var(--ink)}
-.k3{background:var(--pc)}
-.k4{background:var(--gold)}
-
-/* ===== Header band ===== */
-.top{background:linear-gradient(135deg,#0a2b24 0%,#0e5a49 100%);border-bottom:4px solid var(--gold);padding:20px 14px 22px}
-.topin{max-width:720px;margin:auto;display:flex;align-items:center;gap:13px;padding:0 2px}
-.top h1{color:#fff;margin:0 0 3px;font-size:22px}
-.top .sub{color:rgba(255,255,255,.78);margin:0}
-.logo{width:44px;height:44px;border-radius:12px;background:var(--gold);display:grid;place-items:center;flex:none}
-.logo svg{width:24px;height:24px;stroke:#0a2b24;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
-main{padding-top:16px}
-
-/* ===== Blue theme ===== */
-:root{--ink:#0f1b33;--paper:#edf2fa;--card:#fbfcff;--line:#d5deee;--mute:#5a6b88;--blue:#1f4fb8;--teal:#1f5fd0;--acc:#1f5fd0;--pc:#2457c5;--hero:#12306b;--chip:#e0e8f6}
-@media(prefers-color-scheme:dark){:root{--ink:#e6edfa;--paper:#0a1226;--card:#111c36;--line:#22345a;--mute:#93a4c6;--blue:#7fb0ff;--teal:#7fb0ff;--acc:#7fb0ff;--pc:#7fb0ff;--hero:#17336b;--chip:#1a2a4d}}
-.top{background:linear-gradient(135deg,#0b1f4a 0%,#1d4fb4 100%)}
-.logo svg{stroke:#0b1f4a}
-.k1{background:linear-gradient(90deg,hsl(205 70% 48%),hsl(15 70% 48%))}
-.grad{background:linear-gradient(90deg,hsl(205 70% 48%),hsl(110 70% 48%),hsl(15 70% 48%))}
-.field:focus-within{border-color:var(--teal);box-shadow:0 0 0 3px color-mix(in srgb,var(--teal) 24%,transparent)}
-
-/* ===== Blue to light cyan gradients ===== */
-.top{background:radial-gradient(circle at 100% 100%,rgba(140,238,250,.85),transparent 48%),linear-gradient(120deg,#0f3a9a 0%,#1b78d0 62%,#2bb5e0 100%)}
-.top h1,.top .sub{text-shadow:0 1px 6px rgba(8,30,90,.35)}
-.hero{background:radial-gradient(circle at 100% 0,rgba(70,214,236,.5),transparent 55%),linear-gradient(135deg,#12378a 0%,#14509f 100%)}
-body{background:linear-gradient(180deg,#d9f3fb 0,var(--paper) 340px) no-repeat var(--paper)}
-@media(prefers-color-scheme:dark){
- body{background:linear-gradient(180deg,#0c2438 0,var(--paper) 340px) no-repeat var(--paper)}
- .hero{background:radial-gradient(circle at 100% 0,rgba(70,214,236,.32),transparent 55%),linear-gradient(135deg,#14336f 0%,#17407f 100%)}
-}
-
-/* ===== All tenures: centred, aligned columns ===== */
-.row{grid-template-columns:minmax(82px,1fr) 1.2fr .9fr .9fr;gap:4px;padding:10px 2px;text-align:center;align-items:center}
-.row .t{white-space:nowrap;gap:6px}
-.wn{color:var(--amber);font-weight:800;margin-left:3px}
-.row>span{text-align:center;justify-content:center}
-.row .t{font-size:13.5px}
-.row .e{font-size:15.5px}
-.row .m{font-size:13px;color:var(--ink);font-weight:500}
-.row .s{max-width:none;text-align:center;font-size:11.5px}
-.rowh{cursor:default;border-bottom:2px solid var(--line)!important;padding:4px 2px 7px}
-.rowh span{font-size:11.5px;font-weight:650;color:var(--mute)}
-
-/* ===== NEON DASHBOARD: dark bento layout ===== */
-:root,:root:not([x]){--ink:#e9f0ff;--paper:#060a12;--card:#0f1626;--line:#1f2d4a;--mute:#8b9bbd;--blue:#22d3ee;--teal:#22d3ee;--acc:#22d3ee;--pc:#22d3ee;--gold:#fbbf24;--amber:#fb923c;--warn:#fb923c;--hero:#1a1260;--chip:#16213a;--disp:"Sora","Manrope",system-ui,sans-serif;color-scheme:dark}
-body,input,button{font-family:"Manrope",system-ui,sans-serif}
-body{background:radial-gradient(800px 380px at 88% -120px,rgba(139,92,246,.32),transparent 70%),radial-gradient(700px 380px at 0 -80px,rgba(34,211,238,.2),transparent 70%),#060a12 no-repeat}
-.top{background:transparent;border-bottom:1px solid var(--line);box-shadow:0 1px 0 rgba(34,211,238,.25);padding:16px 14px}
-.topin{max-width:1120px}
-.top h1{font:700 20px var(--disp);text-shadow:none}
-.top .sub{text-shadow:none;color:var(--mute)}
-.logo{background:linear-gradient(135deg,#22d3ee,#8b5cf6);border-radius:14px}
-.logo svg{stroke:#05101c}
-.panel{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px}
-h2{font:600 14px var(--disp);color:var(--ink)}
-.field{background:#0a1220;border-radius:12px}
-.field:focus-within{border-color:#22d3ee;box-shadow:0 0 0 3px rgba(34,211,238,.25)}
-.chips{gap:8px}
-.chip{background:var(--chip);color:var(--ink);border-radius:999px;font-weight:600}
-.chip[aria-pressed=true]{background:linear-gradient(135deg,#22d3ee,#8b5cf6);color:#05101c}
-.hero{background:radial-gradient(500px 220px at 100% 0,rgba(139,92,246,.55),transparent 70%),radial-gradient(420px 220px at 0 100%,rgba(34,211,238,.3),transparent 70%),#0d1530;border:1px solid var(--line);border-radius:24px;padding:22px 20px 18px}
-.hero .big{font:700 clamp(44px,9vw,68px)/1 var(--disp);letter-spacing:-.04em;background:linear-gradient(90deg,#67e8f9,#c4b5fd);-webkit-background-clip:text;background-clip:text;color:transparent;margin:8px 0 14px}
-.hero .big small{font:500 15px "Manrope",sans-serif;color:var(--mute);-webkit-text-fill-color:var(--mute);letter-spacing:0}
-.pill{background:rgba(34,211,238,.16);color:#67e8f9;border-radius:8px}
-.pill.warn{background:rgba(251,146,60,.18);color:#fdba74}
-.facts{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:18px}
-.facts div,.facts div:nth-child(odd){border:0;background:rgba(255,255,255,.06);border-radius:14px;padding:11px 13px}
-.facts b{font:700 17px var(--disp)}
-.row[aria-pressed=true]{background:linear-gradient(90deg,rgba(34,211,238,.16),rgba(139,92,246,.16));box-shadow:inset 3px 0 0 #22d3ee}
-.row .s{color:#22d3ee}.row .s.warn{color:var(--amber)}
-.rowh span{color:var(--mute)}
-.tabs{background:#0a1220}
-.tabs button[aria-selected=true]{background:linear-gradient(135deg,#22d3ee,#8b5cf6);color:#05101c;box-shadow:none}
-.chart tr.on td{background:var(--chip)}
-.k1{background:linear-gradient(90deg,hsl(190 85% 62%),hsl(340 85% 62%))}
-.grad{background:linear-gradient(90deg,hsl(190 85% 62%),hsl(265 85% 62%),hsl(340 85% 62%))}
-.stats div{background:#0a1220;border:1px solid var(--line);border-radius:12px}
-details ol{color:var(--mute)}
-@media(min-width:900px){
- main{max-width:1120px;display:grid;grid-template-columns:320px 1fr;gap:16px;align-items:start;padding-top:20px}
- main>.panel:first-child{grid-column:1;grid-row:1;position:sticky;top:16px}
- main>.panel:last-child{grid-column:1;grid-row:2;margin-bottom:0}
- #out{grid-column:2;grid-row:1/span 2;display:grid;grid-template-columns:1fr 1fr;gap:16px}
- #out>*{margin-bottom:0}
- #out>.chips{grid-column:1/-1;grid-row:1}
- #out>.hero{grid-column:1/-1;grid-row:2}
- #dn{grid-column:1;grid-row:3}
- #bars{grid-column:2;grid-row:3}
- #out>section:nth-of-type(3){grid-column:1/-1;grid-row:4}
- #out>section:nth-of-type(5){grid-column:1/-1;grid-row:5}
- #out>section:nth-of-type(6){grid-column:1/-1;grid-row:6}
-}
-</style>
-<style>
-:root[data-theme=light]{--ink:#10203a;--paper:#f2f5fa;--card:#fff;--line:#d9e1ee;--mute:#5c6c88;--chip:#e6ecf6;--blue:#0891b2;--teal:#0891b2;--acc:#0891b2;--pc:#0891b2;--gold:#d98a00;--amber:#d9631a;--warn:#d9631a}
-:root[data-theme=light] body{background:#f2f5fa}
-:root[data-theme=light] .top h1{color:var(--ink);-webkit-text-fill-color:var(--ink)}
-:root[data-theme=light] .top{background:#fff;box-shadow:0 1px 0 var(--line)}
-:root[data-theme=light] .field,:root[data-theme=light] .tabs,:root[data-theme=light] .stats div,:root[data-theme=light] .tl input,:root[data-theme=light] .tl select{background:#eef2f9}
-:root[data-theme=light] .hero{--ink:#e9f0ff;--mute:#a9b8d8;color:#e9f0ff}
-.tbtn{margin-left:auto;flex:none;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:999px;width:40px;height:40px;font-size:18px;cursor:pointer}
-#aw{display:block;font-size:12px;color:var(--mute);margin:4px 2px 0;min-height:16px}
-.pre{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:12px;font-size:12px;color:var(--mute)}
-.pre b{font-weight:600;min-width:74px}
-.pre button,.tl button{border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:999px;padding:6px 12px;font-weight:600;font-size:12.5px;font-family:inherit;cursor:pointer}
-.pre button.on{background:var(--gold);color:#1a1200;border-color:transparent}
-.tl{margin-bottom:12px}
-.tl h2{margin:0 0 10px}
-.tl .sub2{font-size:12px;color:var(--mute);margin:-4px 0 8px}
-.tl pre{white-space:pre-wrap;font-size:13px;line-height:1.55;font-family:inherit;background:var(--chip);border-radius:12px;padding:12px;margin:0 0 10px;color:var(--ink)}
-.tl .bt2{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.tl input,.tl select{border:1px solid var(--line);background:#0a1220;color:var(--ink);border-radius:10px;padding:9px 10px;font-weight:600;font-size:15px;font-family:inherit;min-width:0}
-.tl table{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}
-.tl th,.tl td{padding:7px 4px;text-align:right;border-bottom:1px solid var(--line)}
-.tl th:first-child,.tl td:first-child{text-align:left;color:var(--mute)}
-.sv{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px}
-.sv button{padding:5px 10px}
-.tl .ok{color:var(--teal);font-weight:650;font-size:13px}
-#shm{position:fixed;inset:0;background:rgba(0,0,0,.72);display:grid;place-items:center;z-index:50;padding:14px}
-#shm[hidden]{display:none}
-.shb{background:var(--card);border-radius:16px;padding:12px;max-width:420px;width:100%;max-height:92vh;overflow:auto}
-#shi{width:100%;display:block;border-radius:10px;margin-bottom:8px}
+body{margin:0;background:var(--bg);color:var(--ink);font:500 15px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-variant-numeric:tabular-nums;padding-bottom:104px}
+header{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line);background:var(--card2);position:sticky;top:0;z-index:5}
+.lg{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#2dd4bf,#fde68a);display:grid;place-items:center;color:#0b1a24;font-size:25px;font-weight:800;flex:none}
+header h1{margin:0;font-size:18px;line-height:1.15}
+header p{margin:2px 0 0;font-size:12px;color:var(--mute);line-height:1.25}
+.sw{margin-left:auto;display:flex;gap:2px;background:var(--chip);border:1px solid var(--line);border-radius:14px;padding:3px;flex:none}
+.sw button{border:0;background:none;color:var(--mute);width:34px;height:34px;border-radius:11px;font-size:16px;cursor:pointer}
+.sw button.on{background:var(--card);color:var(--acc);box-shadow:0 1px 3px #0004}
+main{max-width:560px;margin:auto;padding:14px}
+.view{display:none}.view.on{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px;margin-bottom:14px}
+.ch{display:flex;align-items:center;gap:10px;margin:0 0 14px;font-size:16px;font-weight:800}
+.ch .ic{flex:none}
+.ch .ic{width:30px;height:30px;border:1.5px solid var(--acc);border-radius:9px;display:grid;place-items:center;color:var(--acc);font-size:15px}
+.ch a{margin-left:auto;color:var(--mute);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;flex:none}
+.lb{display:flex;justify-content:space-between;color:var(--mute);font-size:13px;margin:14px 0 6px}
+.lb b{color:var(--acc);font-weight:600}
+.f{display:flex;align-items:center;background:var(--bg);border:1.5px solid var(--line);border-radius:16px;padding:0 16px}
+.f:focus-within{border-color:var(--acc)}
+.f i{font-style:normal;color:var(--mute);font-size:16px}
+.f input{flex:1;min-width:0;border:0;background:none;color:var(--ink);font:800 22px system-ui,sans-serif;padding:15px 8px;outline:none}
+.pr{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.pr button,.tc button{border:0;background:var(--chip);color:var(--mute);border-radius:999px;padding:7px 13px;font:600 13px inherit;font-family:inherit;cursor:pointer}
+.pr button.on{background:var(--acc);color:var(--on)}.pr.g button.on{background:var(--gold)}
+#err{color:var(--bad);font-weight:700;margin:12px 0 0}#err:empty{display:none}
+.mini{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+.mini div{background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.mini span{display:block;font-size:12px;color:var(--mute)}.mini b{font-size:17px}
+.tc{display:flex;gap:8px;overflow-x:auto;padding-bottom:12px;scrollbar-width:none}.tc::-webkit-scrollbar{display:none}
+.tc button{flex:none;font-size:14px;padding:9px 15px}.tc button.on{background:linear-gradient(120deg,var(--acc),#7dd3a8);color:var(--on);font-weight:800}
+.hero{background:linear-gradient(135deg,#0e7490,#1d4ed8 60%,#6d28d9);color:#fff;border-radius:22px;padding:20px;margin-bottom:14px}
+.hero small{opacity:.8}.hero .big{font-size:46px;font-weight:800;letter-spacing:-.03em;line-height:1.1}
+.hero .big em{font-size:16px;font-style:normal;font-weight:500;opacity:.8}
+.kp{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.kp div{background:#ffffff1f;border-radius:12px;padding:8px 11px}.kp span{display:block;font-size:11.5px;opacity:.8}.kp b{font-size:16px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{color:var(--mute);font-size:11px;text-transform:uppercase;letter-spacing:.05em;padding:8px 4px;text-align:right;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--card)}
+td{padding:9px 4px;text-align:right;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left}
+tr.bp td{background:#fbbf2420;color:var(--gold);font-weight:700}
+tfoot td{font-weight:800;border-bottom:0}
+.bkw{max-height:360px;overflow:auto;border:1px solid var(--line);border-radius:12px;padding:0 8px}
+.note{color:var(--mute);font-size:12.5px;margin:0 0 8px}
+#mx tr{cursor:pointer}#mx tr.on td{background:#22d3ee1c;font-weight:700}
+.mb{height:5px;border-radius:3px;background:var(--acc);margin-top:4px;margin-left:auto}
+.q{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--card2)}
+.q .qh{display:flex;justify-content:space-between;padding:10px 14px;background:linear-gradient(110deg,#1e1b6b,var(--acc));color:#fff;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+.q .qe{padding:14px;display:flex;justify-content:space-between;align-items:flex-end}.q .qe small{display:block;color:var(--mute)}.q .qe b{font-size:34px;font-weight:800}
+.q .qe em{font-style:normal;color:var(--acc);background:#22d3ee1f;padding:4px 10px;border-radius:99px;font-weight:700;font-size:13px}
+.qr{display:flex;justify-content:space-between;gap:10px;padding:9px 14px;border-top:1px dashed var(--line);font-size:13.5px}.qr span{color:var(--mute)}.qr b{text-align:right}.qr.bp{background:#fbbf2420}.qr.bp b{color:var(--gold)}.qr i{font-style:normal;color:var(--mute);font-weight:500}
+.bt{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;align-items:center}
+.bt button{border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:99px;padding:11px 17px;font:700 14px inherit;font-family:inherit;cursor:pointer}
+.bt button.p{background:linear-gradient(120deg,var(--acc),#7dd3a8);color:var(--on);border:0}
+.bt .ok{color:var(--good);font-weight:700;font-size:13px}
+.sv{display:flex;justify-content:space-between;align-items:center;padding:11px 12px;border:1px solid var(--line);border-radius:14px;margin-bottom:8px;background:var(--card2);gap:8px}
+.sv button{border:0;background:var(--chip);color:var(--ink);border-radius:9px;padding:6px 10px;font-weight:700;cursor:pointer}
+.empty{border:1.5px dashed var(--line);border-radius:14px;padding:16px;text-align:center;color:var(--mute);font-size:13px}
+select{background:var(--bg);color:var(--ink);border:1.5px solid var(--line);border-radius:14px;padding:12px;font:700 15px inherit;font-family:inherit;flex:1;min-width:0}
+.cmpb{display:flex;gap:10px;align-items:center;margin-bottom:12px;color:var(--mute)}
+td.gd{color:var(--good);font-weight:800}td.bd{color:var(--bad);font-weight:800}
+.bgr{margin-top:10px;background:#22d3ee14;border:1px solid #22d3ee44;border-radius:14px;padding:11px 13px;font-weight:600}.bgr:empty{display:none}.bgr.no{background:#fb718514;border-color:#fb718544}
+.bc{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.bc span{background:var(--chip);border-radius:99px;padding:5px 10px;font-size:12px;font-weight:700}.bc em{font-style:normal;color:var(--acc)}
+ol{padding-left:20px;margin:0}li{margin-bottom:10px}
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--card2);border-top:1px solid var(--line);z-index:9}
+nav div{max-width:560px;margin:auto;display:grid;grid-template-columns:repeat(5,1fr);align-items:end;padding:8px 6px 12px}
+nav button{border:0;background:none;color:var(--mute);font:600 12px inherit;font-family:inherit;display:grid;justify-items:center;gap:4px;cursor:pointer;padding:4px 0}
+nav button svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+nav button.on{color:var(--acc)}
+nav button.mid{margin-top:-30px}nav button.mid span.c{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#2dd4bf,#fde68a);display:grid;place-items:center;color:#0b1a24;border:4px solid var(--card2);box-shadow:0 6px 18px #0006}
+nav button.mid svg{stroke:#0b1a24}
+#shm{position:fixed;inset:0;background:#000b;display:grid;place-items:center;z-index:20;padding:14px}#shm[hidden]{display:none}
+.shb{background:var(--card);border-radius:18px;padding:12px;max-width:420px;width:100%;max-height:92vh;overflow:auto}#shi{width:100%;border-radius:10px;display:block;margin-bottom:8px}
 </style>
 </head>
 <body>
-<header class="top"><div class="topin"><span class="logo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12M6 9h12M6 4c6 0 8 2 8 5s-3 5-8 5l7 6"/></svg></span><div><h1>NJ EMI Store – IRR calculator</h1><p class="sub">Customer EMI for each tenure, solved to your target NJC IRR.</p></div></div></header>
+<header>
+ <div class="lg">₹</div>
+ <div><h1>NJ EMI Store</h1><p>Exact monthly EMI solved to target NJC IRR</p></div>
+ <div class="sw" id="sw"><button data-t="dark" title="Night">☾</button><button data-t="light" title="Day">☀</button></div>
+</header>
 <main>
-
-<section class="panel">
- <div class="inputs">
-  <div class="wide"><label for="amount">Asset / loan amount, incl. GST</label><div class="field"><i>₹</i><input id="amount" type="number" inputmode="decimal" min="0.01" step="0.01" value="100000"></div></div>
-  <div><label for="subvention">Subvention incl. GST</label><div class="field"><input id="subvention" type="number" inputmode="decimal" min="0" step="0.01" value="2.5"><i>%</i></div></div>
-  <div><label for="target">Target NJC IRR p.a.</label><div class="field"><input id="target" type="number" inputmode="decimal" min="0" step="0.01" value="12"><i>%</i></div></div>
-  <div class="wide"><label for="days">Broken-period days</label><div class="field"><input id="days" type="number" inputmode="numeric" min="0" step="1" value="16"><i>days</i></div></div>
+<section class="view on" id="v-calc">
+ <div class="card">
+  <div class="ch"><span class="ic">▦</span>Loan &amp; IRR Parameters<a id="rst">↻ Reset</a></div>
+  <div class="lb"><span>Asset / Loan Amount (incl. GST)</span><b id="aw"></b></div>
+  <div class="f"><i>₹</i><input id="amount" type="number" inputmode="decimal" min="0.01" step="0.01" value="100000"></div>
+  <div class="pr" data-f="amount" data-v="50000,100000,200000,500000,1000000" data-l="₹50k,₹1L,₹2L,₹5L,₹10L"></div>
+  <div class="lb"><span>Subvention incl. GST</span><span id="sx"></span></div>
+  <div class="f"><input id="subvention" type="number" inputmode="decimal" min="0" step="0.01" value="2.5"><i>%</i></div>
+  <div class="pr g" data-f="subvention" data-v="0,1.5,2,2.5,3.5,5" data-l="0%,1.5%,2%,2.5%,3.5%,5%"></div>
+  <div class="lb"><span>Target NJC IRR p.a.</span></div>
+  <div class="f"><input id="target" type="number" inputmode="decimal" min="0" step="0.01" value="12"><i>%</i></div>
+  <div class="pr" data-f="target" data-v="10,11,12,13,14,15,16" data-l="10%,11%,12%,13%,14%,15%,16%"></div>
+  <div class="lb"><span>Broken-period Days</span><span>360-day year basis</span></div>
+  <div class="f"><input id="days" type="number" inputmode="numeric" min="0" step="1" value="16"><i>days</i></div>
+  <p id="err" role="alert"></p>
+  <div class="mini" id="mini"></div>
  </div>
- <p id="err" role="alert"></p>
+ <div id="res">
+  <div class="tc" id="tc"></div>
+  <div class="hero" id="hero"></div>
+  <div class="card"><div class="ch"><span class="ic">☰</span>Payment break-up</div><p class="note" id="bnote"></p><div id="bk"></div></div>
+ </div>
 </section>
 
-<div id="out" hidden>
- <div class="chips" id="chips" aria-label="Choose tenure"></div>
- <section class="hero" id="hero"></section>
- <section class="panel" id="dn"></section>
- <section class="panel"><h2>All tenures</h2><div id="list"></div></section>
- <section class="panel" id="bars"></section>
- <section class="panel"><h2>Tenure, interest rate and EMI</h2><p style="margin:-4px 0 8px;font-size:12px;color:var(--mute)">Tap a tenure to see every payment.</p><table class="chart"><colgroup><col style="width:29%"><col style="width:27%"><col style="width:19%"><col style="width:25%"></colgroup><thead><tr><th>Tenure</th><th>Monthly EMI</th><th>Interest rate</th><th>Total paid</th></tr></thead><tbody id="chart"></tbody></table></section>
- <section class="panel"><h2>Inputs as used</h2><div class="stats" id="stats"></div></section>
-</div>
+<section class="view" id="v-mx"><div class="card"><div class="ch"><span class="ic">≣</span>Tenure matrix</div><p class="note">Tap a row to select that tenure.</p>
+ <table id="mx"><thead><tr><th>Tenure</th><th>Rate</th><th>EMI ₹</th><th>Total ₹</th><th>IRR</th></tr></thead><tbody></tbody></table></div></section>
 
-<section class="panel">
-<details>
-<summary>How the workbook model is applied</summary>
-<ol>
-<li>Subvention excluding GST = amount × (subvention % ÷ 118%).</li>
-<li>Net initial outflow to NJC = amount − net subvention receipt. Brokerage is ₹0 because the workbook's brokerage cells are blank.</li>
-<li>EMI uses the PMT-equivalent reducing-balance formula with customer annual rate ÷ 12.</li>
-<li>Broken period = −(amount × customer rate ÷ 100 ÷ 360) × days. It counts as a cash-flow period only when the customer rate is above 0% and the days are above 0.</li>
-<li>Achieved IRR uses the initial outflow, the broken-period flow when it applies, and the EMI flows, then annualises monthly IRR × 12.</li>
-<li>If the target is already met at a 0% customer rate, the rate stays at 0% and the row is flagged. The rate never goes negative.</li>
-</ol>
-</details>
+<section class="view" id="v-q"><div class="card"><div class="ch"><span class="ic">✉</span>Quote</div><div class="q" id="qt"></div>
+ <div class="bt"><button id="qc">Copy</button><button class="p" id="qh">Share</button><button class="p" id="qi">Share image</button><button id="qs">Save quote</button><span class="ok" id="qm"></span></div></div>
+ <div class="card"><div class="ch"><span class="ic">★</span>Saved quotes</div><div id="sl"></div></div></section>
+
+<section class="view" id="v-cmp"><div class="card"><div class="ch"><span class="ic">⇄</span>Compare two tenures</div>
+ <div class="cmpb"><select id="ca"></select>vs<select id="cb"></select></div><div id="cr"></div></div>
+ <div class="card"><div class="ch"><span class="ic">◎</span>Customer budget</div><p class="note">Type the EMI the customer can afford each month.</p>
+ <div class="f"><i>₹</i><input id="bg" type="number" inputmode="numeric" placeholder="per month"></div><div class="bgr" id="bgr"></div></div></section>
+
+<section class="view" id="v-guide">
+ <div class="card"><div class="ch"><span class="ic">?</span>How to use</div>
+ <ol>
+  <li><b>Enter the deal</b> on the Calculator tab: the loan amount, the subvention %, the target IRR % and the broken-period days. Tap the small buttons for quick values.</li>
+  <li><b>Pick a tenure</b> from the row of buttons (3 to 84 months). The big card shows that tenure's EMI, customer rate, total repayment and interest.</li>
+  <li><b>Read the payment break-up</b> below it. If there is a broken period, payment 1 is the broken-period interest and the EMIs start after it.</li>
+  <li><b>Matrix</b> shows every tenure in one table. Tap a row to select that tenure.</li>
+  <li><b>Quote</b> (the round button) makes a customer-ready quote. Copy or share it as text, share it as an image, or save it to open later.</li>
+  <li><b>Compare</b> puts two tenures side by side. The budget box finds the tenures that fit the EMI a customer can pay.</li>
+ </ol></div>
+ <div class="card"><div class="ch"><span class="ic">i</span>What the boxes mean</div>
+ <ol>
+  <li><b>Loan amount:</b> the asset or loan amount including GST.</li>
+  <li><b>Subvention:</b> the % of the loan received from the brand or dealer, including GST. The card also shows it without GST.</li>
+  <li><b>Target IRR:</b> the yearly return you want. The calculator finds the customer interest rate that reaches it for each tenure.</li>
+  <li><b>Broken-period days:</b> the days between the loan start and the first EMI date. The interest for these days is charged as payment 1.</li>
+  <li><b>Net initial outflow:</b> the loan amount minus the subvention received without GST.</li>
+ </ol></div>
+ <div class="card"><div class="ch"><span class="ic">✓</span>Good to know</div>
+ <ol>
+  <li>Subvention and days can be left blank, which counts as 0. With both at 0, the customer rate equals your target IRR.</li>
+  <li>The customer rate is rounded to 2 decimals before the EMI is worked out, the same way the EMI Store site does it.</li>
+  <li>The customer rate never goes below 0%. If your target is already reached at 0%, the rate stays at 0%.</li>
+  <li>Saved quotes stay on this phone. Use the ☾ and ☀ buttons at the top to switch between night and day colours.</li>
+ </ol></div>
 </section>
 </main>
-
+<p id="bnote2" hidden></p>
+<div id="shm" hidden><div class="shb"><img id="shi" alt="Quote image"><p class="note" id="shn">Press and hold the image to save it, or tap Share.</p><div class="bt"><button class="p" id="shs">Share</button><button id="shx">Close</button></div></div></div>
+<nav><div id="nav">
+ <button data-v="calc" class="on"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M9 12h.01M12 12h.01M15 12h.01M9 16h.01M12 16h.01M15 16h.01"/></svg>Calculator</button>
+ <button data-v="mx"><svg viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5 9-5zM3 13l9 5 9-5M3 17l9 5 9-5"/></svg>Matrix</button>
+ <button data-v="q" class="mid"><span class="c"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></span>Quote</button>
+ <button data-v="cmp"><svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M6 9v4a3 3 0 003 3h6M15 13l3 3-3 3M18 9V8a3 3 0 00-3-3h-3"/></svg>Compare</button>
+ <button data-v="guide"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>Guide</button>
+</div></nav>
 <script>
+
 const tenures=[3,6,9,12,18,24,36,48,60,72,84];
 const whole=n=>Number.isFinite(n)?Math.round(n).toLocaleString('en-IN'):'—';
 const pct=n=>Number.isFinite(n)?n.toFixed(2)+'%':'—';
 const $=id=>document.getElementById(id);
-const tc=m=>{const t=tenures.indexOf(m)/(tenures.length-1);return `hsl(${Math.round(190+150*t)} 85% 62%)`};
-const P_={cal:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',pct:'<path d="M19 5 5 19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>',wal:'<path d="M20 12V8H6a2 2 0 0 1 0-4h12v4"/><path d="M4 6v12a2 2 0 0 0 2 2h14v-4"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/>',up:'<path d="m3 17 6-6 4 4 8-8"/><path d="M15 7h6v6"/>',tgt:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',clk:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',rs:'<path d="M6 4h12M6 9h12M6 4c6 0 8 2 8 5s-3 5-8 5l7 6"/>',sum:'<path d="M18 7H6l6 5-6 5h12"/>',bar:'<path d="M5 21V10M12 21V4M19 21v-7"/>',line:'<path d="M3 3v18h18"/><path d="m7 15 4-5 3 3 5-6"/>',stack:'<path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/>'};
-const ic=n=>`<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${P_[n]}</svg>`;
-function drawExtra(){
- const x=data.find(d=>d.months===sel)||data[0],A=Number($('amount').value),I=Math.max(0,x.interest),T=A+I,C=2*Math.PI*52,pp=A/T*C,ip=I/T*C;
- $('hero').style.boxShadow=`inset 0 6px 0 ${tc(x.months)}`;
- $('dn').innerHTML=`<h2>Principal vs interest, ${x.months} months</h2><div class="dnw"><svg class="dn" viewBox="0 0 140 140" role="img" aria-label="Principal ₹${whole(A)}, interest ₹${whole(I)}"><circle cx="70" cy="70" r="52" fill="none" stroke="var(--line)" stroke-width="20"/><circle cx="70" cy="70" r="52" fill="none" stroke="var(--pc)" stroke-width="20" stroke-dasharray="${pp} ${C}" transform="rotate(-90 70 70)"/><circle cx="70" cy="70" r="52" fill="none" stroke="var(--gold)" stroke-width="20" stroke-dasharray="${ip} ${C}" stroke-dashoffset="${-pp}" transform="rotate(-90 70 70)"/><text x="70" y="70" class="d1">${(I/T*100).toFixed(1)}%</text><text x="70" y="88" class="d2">is interest</text></svg><div class="lg"><div><span class="sw p">${ic('wal')}</span><span><b>₹${whole(A)}</b><span class="l">Principal, ${(A/T*100).toFixed(1)}%</span></span></div><div><span class="sw i">${ic('up')}</span><span><b>₹${whole(I)}</b><span class="l">Interest paid</span></span></div><div><span class="sw t">${ic('sum')}</span><span><b>₹${whole(T)}</b><span class="l">Total repayment</span></span></div></div></div>`;
- drawBars();
-}
-let tab='emi';
-const kfmt=v=>v>=1000?(v/1000).toFixed(1).replace('.0','')+'k':String(Math.round(v));
-function niceStep(v){const raw=Math.max(v,1)/4,mag=Math.pow(10,Math.floor(Math.log10(raw))),n=raw/mag;return(n<=1?1:n<=2?2:n<=2.5?2.5:n<=5?5:10)*mag}
-function drawBars(){
- const W=360,H=264,L=40,R=8,T=50,B=32,pw=W-L-R,ph=H-T-B,n=data.length,sw=pw/n,A=Number($('amount').value),I=d=>Math.max(0,d.interest);
- const vals=data.map(d=>tab==='emi'?d.emiRounded:tab==='int'?I(d):A+I(d));
- const st=niceStep(Math.max(...vals)),top=st*4,y=v=>T+ph-v/top*ph,hh=v=>v/top*ph,cx=i=>L+sw*i+sw/2,bw=Math.min(20,sw*.68);
- const lab=(i,v,yy,on)=>`<text transform="rotate(-90 ${cx(i)+3.4} ${yy})" x="${cx(i)+3.4}" y="${yy}" class="dl${on?' on':''}">${whole(v)}</text>`;
- let g='',Hs=H;
- for(let k=0;k<=4;k++){const v=st*k;g+=`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" class="gl0"/><text x="${L-5}" y="${y(v)+3}" class="yl">${k?'₹'+kfmt(v):'0'}</text>`}
- if(tab!=='emi')data.forEach((d,i)=>{g+=`<text x="${cx(i)}" y="${H-B+14}" class="xl${d.months===sel?' on':''}">${d.months}</text>`});
- g+=`<text x="${L+pw/2}" y="${H-4}" class="xt">Tenure in months</text>`;
- const si=data.findIndex(d=>d.months===sel),sd=data[si]||data[0];
- if(tab==='emi'){
-  g='';const rh=25,t0=4,lx=54,mx=Math.max(...vals)||1,bwid=W-lx-96;
-  Hs=t0+n*rh+22;
-  const len=v=>Math.max(3,Math.sqrt(v/mx)*bwid);
-  data.forEach((d,i)=>{const on=d.months===sel,yy=t0+i*rh,bl=len(d.emiRounded),cy=yy+rh/2+4;
-   g+=`<rect x="0" y="${yy}" width="${W}" height="${rh}" rx="7" fill="${on?'var(--chip)':'transparent'}"/>`+
-   `<text x="${lx-9}" y="${cy}" class="xl${on?' on':''}" style="font-size:12px;text-anchor:end">${d.months} mo</text>`+
-   `<rect x="${lx}" y="${yy+5}" width="${bl}" height="${rh-10}" rx="3" fill="${on?'var(--gold)':'var(--acc)'}" opacity="${on?1:.5}"/>`+
-   `<text x="${lx+bl+6}" y="${cy}" class="dl${on?' on':''}" style="font-size:12px">₹${whole(d.emiRounded)}</text>`+
-   `<rect x="0" y="${yy}" width="${W}" height="${rh}" fill="transparent" data-m="${d.months}" class="hit"/>`});
-  g+=`<text x="${lx}" y="${Hs-7}" class="xt" style="text-anchor:start">Bar length uses a square-root scale</text>`;
- }else if(tab==='int'){
-  const pts=data.map((d,i)=>`${cx(i)},${y(I(d))}`);
-  g+=`<path d="M${cx(0)},${y(0)} L${pts.join(' L')} L${cx(n-1)},${y(0)} Z" fill="var(--gold)" opacity=".2"/><polyline points="${pts.join(' ')}" fill="none" stroke="var(--gold)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
-  data.forEach((d,i)=>{const on=d.months===sel;g+=`<circle cx="${cx(i)}" cy="${y(I(d))}" r="${on?6:3.5}" fill="${tc(d.months)}" stroke="${on?'var(--ink)':'var(--card)'}" stroke-width="${on?2:1.5}"/>`});
-  data.forEach((d,i)=>{g+=lab(i,I(d),y(I(d))-11,d.months===sel)});
- }else{
-  data.forEach((d,i)=>{const on=d.months===sel,o=on?1:.7;g+=`<rect x="${cx(i)-bw/2}" y="${y(A)}" width="${bw}" height="${hh(A)}" fill="var(--pc)" opacity="${o}"/><rect x="${cx(i)-bw/2}" y="${y(A+I(d))}" width="${bw}" height="${hh(I(d))}" fill="var(--gold)" opacity="${o}"/>`+(on?`<rect x="${cx(i)-bw/2-1}" y="${y(A+I(d))-1}" width="${bw+2}" height="${hh(A+I(d))+2}" fill="none" stroke="var(--ink)" stroke-width="1.5" rx="2"/>`:'')});
-  data.forEach((d,i)=>{g+=lab(i,A+I(d),y(A+I(d))-5,d.months===sel)});
- }
- if(tab!=='emi')data.forEach((d,i)=>{g+=`<rect x="${L+sw*i}" y="${T-10}" width="${sw}" height="${ph+B+10}" fill="transparent" data-m="${d.months}" class="hit"/>`});
- const T_={emi:['Monthly EMI by tenure','<span><i class="k4"></i>Selected tenure is highlighted. Bar length uses a square-root scale so small EMIs stay visible</span>',(()=>{const sh=data[si-1],lo=data[si+1];let h=`<b>${sd.months} months:</b> EMI ₹${whole(sd.emiRounded)} per month, ₹${whole(I(sd))} interest in total.`;if(sh){const d=I(sd)-I(sh);h+=`<div class="cmp"><b>Shorter, ${sh.months} mo:</b> EMI ₹${whole(sh.emiRounded-sd.emiRounded)} higher each month, interest ₹${whole(Math.abs(d))} ${d>=0?'less':'more'}</div>`}if(lo){const d=I(lo)-I(sd);h+=`<div class="cmp"><b>Longer, ${lo.months} mo:</b> EMI ₹${whole(sd.emiRounded-lo.emiRounded)} lower each month, interest ₹${whole(Math.abs(d))} ${d>=0?'more':'less'}</div>`}return h})()],int:['Interest paid by tenure','<span><i class="k4"></i>Total interest over the loan</span>',`<b>${sd.months} months:</b> ₹${whole(I(sd))} interest in total`],split:['Principal and interest by tenure','<span><i class="k3"></i>Principal</span><span><i class="k4"></i>Interest</span>',`<b>${sd.months} months:</b> ₹${whole(A)} principal + ₹${whole(I(sd))} interest`]}[tab];
- const tabs=[['emi','bar','EMI'],['int','line','Interest'],['split','stack','Split']].map(t=>`<button role="tab" data-tab="${t[0]}" aria-selected="${tab===t[0]}">${ic(t[1])}${t[2]}</button>`).join('');
- $('bars').innerHTML=`<h2>${T_[0]}</h2><div class="tabs" role="tablist">${tabs}</div><div class="keys">${T_[1]}</div><svg class="cg" viewBox="0 0 ${W} ${Hs}" role="img" aria-label="${T_[0]}">${g}</svg><div class="ro">${T_[2]}</div>`;
-}
-document.addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(b){tab=b.dataset.tab;drawBars()}});
-
-
-let data=[],sel=12,openM=null;
-
+let data=[],sel=12;
 function emi(p,a,m){const r=a/100/12;if(Math.abs(r)<1e-12)return p/m;const f=Math.pow(1+r,m);return p*r*f/(f-1)}
 function brokenPeriod(p,a,d){return a>0?-(p*(a/100)/360)*d:0}
 function monthlyIRR(flows){
@@ -443,119 +187,25 @@ function evaluate(amount,sub,days,months,rate){
 }
 function solveRate(amount,sub,days,months,target){
  const at=r=>evaluate(amount,sub,days,months,r).achieved,z=at(0);
- if(!Number.isFinite(z))return{...evaluate(amount,sub,days,months,0),status:'Check cash flows'};
- if(z>=target)return{...evaluate(amount,sub,days,months,0),status:Math.abs(z-target)<0.03?'Target reached':'0% floor; target not reachable without negative rate'};
+ if(!Number.isFinite(z))return evaluate(amount,sub,days,months,0);
+ if(z>=target)return evaluate(amount,sub,days,months,0);
  let lo=0,hi=50,h=at(hi);
  while(Number.isFinite(h)&&h<target&&hi<100000){hi*=2;h=at(hi)}
- if(!Number.isFinite(h)||h<target)return{...evaluate(amount,sub,days,months,0),status:'Could not solve'};
+ if(!Number.isFinite(h)||h<target)return evaluate(amount,sub,days,months,0);
  for(let i=0;i<220;i++){const mid=(lo+hi)/2,v=at(mid);if(Math.abs(v-target)<0.00001){lo=hi=mid;break}if(v>target)hi=mid;else lo=mid}
- const r=evaluate(amount,sub,days,months,Math.round((lo+hi)/2*100)/100);
- r.status=Math.abs(r.achieved-target)<0.03?'Target reached':'Approximate';
- return r;
+ return evaluate(amount,sub,days,months,Math.round((lo+hi)/2*100)/100);
 }
-const isWarn=s=>!(s==='Target reached');
-const short=s=>s.startsWith('0% floor')?'0% floor':s;
-
 function breakup(x){
  const n=x.months,E=x.emiRounded,bp=Math.round(-x.broken),has=x.rate>0&&bp>0,r=x.rate/1200;
- let bal=Number(document.getElementById('amount').value),rows='',ta=0,ti=0,tp=0,no=1;
- const row=(cls,type,a,i,p)=>{rows+=`<tr class="${cls}"><td>${no++}${cls?' <small>BP</small>':''}</td><td>${whole(a)}</td><td>${whole(i)}</td><td>${whole(p)}</td><td>${whole(bal)}</td></tr>`;ta+=a;ti+=i;tp+=p};
- if(has)row('bp','Broken-period interest',bp,bp,0);
- for(let k=1;k<=n;k++){let i=bal*r,p=E-i;if(k===n){if(bal<=E){p=bal;i=E-p}else{i=Math.max(0,i);p=E-i}bal=0}else bal-=p;row('','EMI '+k,E,i,p)}
- return `<div class="bkw"><table class="bk"><thead><tr><th>No.</th><th>Amount ₹</th><th>Interest ₹</th><th>Principal ₹</th><th>Balance ₹</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td>Total</td><td>${whole(ta)}</td><td>${whole(ti)}</td><td>${whole(tp)}</td><td></td></tr></tfoot></table></div>`;
+ let bal=Number($('amount').value),rows='',ta=0,ti=0,tp=0,no=1;
+ const row=(c,a,i,p,tag)=>{rows+=`<tr class="${c}"><td>${no++}${tag?' <small>BP</small>':''}</td><td>${whole(a)}</td><td>${whole(i)}</td><td>${whole(p)}</td><td>${whole(bal)}</td></tr>`;ta+=a;ti+=i;tp+=p};
+ if(has)row('bp',bp,bp,0,1);
+ for(let k=1;k<=n;k++){let i=bal*r,p=E-i;if(k===n){if(bal<=E){p=bal;i=E-p}else{i=Math.max(0,i);p=E-i}bal=0}else bal-=p;row('',E,i,p)}
+ $('bnote').textContent=has?`Payment 1 is the broken-period interest (${$('days').value} days). Then ${n} EMIs. All amounts in ₹.`:`${n} EMIs, no broken-period interest. All amounts in ₹.`;
+ return `<div class="bkw"><table><thead><tr><th>No.</th><th>Amount</th><th>Interest</th><th>Principal</th><th>Balance</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td>Total</td><td>${whole(ta)}</td><td>${whole(ti)}</td><td>${whole(tp)}</td><td></td></tr></tfoot></table></div>`;
 }
-function sched(x){
- const n=x.months,bp=Math.round(-x.broken),has=x.rate>0&&bp>0,days=document.getElementById('days').value;
- return `<div class="sch"><div class="sh">Full break-up: ${n} months</div><div class="ss">${has?`${n+1} payments. Payment 1 is the broken-period interest (${days} days at ${pct(x.rate)}), then the ${n} EMIs start.`:`No broken-period interest, so the ${n} EMIs start at payment 1.`}</div>${breakup(x)}</div>`;
-}
-function calculate(){
- const amount=Number($('amount').value),subv=Number($('subvention').value),target=Number($('target').value),days=Number($('days').value);
- if(!($('amount').value&&$('target').value)||!(amount>0)||subv<0||target<0||days<0){
-  $('err').textContent='Enter a loan amount above 0 and a target IRR. Subvention and days can be 0 or left blank.';
-  $('out').hidden=true;return;
- }
- $('err').textContent='';
- const subEx=amount*(subv/100)/1.18;
- data=tenures.map(m=>solveRate(amount,subEx,days,m,target));
- $('stats').innerHTML=[['Loan amount','₹'+whole(amount)],['Subvention incl. GST',pct(subv)],['Subvention excl. GST','₹'+whole(subEx)],['Target NJC IRR',pct(target)],['Tenures at 0% floor',data.filter(x=>x.status.startsWith('0% floor')).length+' of '+tenures.length],['Broken-period days',days]].map(x=>`<div><span>${x[0]}</span><b>${x[1]}</b></div>`).join('');
- $('out').hidden=false;render();
-}
-function render(){
- drawExtra();
- $('chips').innerHTML=data.map(x=>`<button class="chip" data-m="${x.months}" aria-pressed="${x.months===sel}"><i class="dot" style="background:${tc(x.months)}"></i>${x.months} mo</button>`).join('');
- const x=data.find(d=>d.months===sel)||data[0];
- $('hero').innerHTML=`<div class="lbl">${ic('cal')}Monthly EMI for ${x.months} months</div>
-  <div class="big">₹${whole(x.emiRounded)}<small> / month</small></div>
-  ${isWarn(x.status)?`<span class="pill warn">${x.status}</span>`:''}
-  <div class="facts">
-   <div><span>${ic('pct')}Customer rate</span><b>${pct(x.rate)}</b></div>
-   <div><span>${ic('tgt')}Achieved NJC IRR</span><b>${pct(x.achieved)}</b></div>
-   <div><span>${ic('wal')}Total repayment</span><b>₹${whole(x.total)}</b></div>
-   <div><span>${ic('up')}Total interest</span><b>₹${whole(x.interest)}</b></div>
-   <div><span>${ic('clk')}Broken-period cash flow</span><b>₹${whole(x.broken)}</b></div>
-  </div>`;
- const mx=Math.max(...data.map(d=>d.emiRounded));
- $('chart').innerHTML=data.map(d=>`<tr class="cr ${d.months===sel?'on':''}" data-c="${d.months}"><td><i class="dot" style="background:${tc(d.months)}"></i>${openM===d.months?'▾':'▸'} ${d.months} months</td><td>₹${whole(d.emiRounded)}<span class="bar" style="width:${Math.max(4,d.emiRounded/mx*100)}%;background:${tc(d.months)}"></span></td><td>${pct(d.rate)}</td><td>₹${whole(d.total)}</td></tr>`+(openM===d.months?`<tr class="xp"><td colspan="4">${sched(d)}</td></tr>`:'')).join('');
- $('list').innerHTML='<div class="row rowh"><span>Tenure</span><span>EMI</span><span>Rate</span><span>IRR</span></div>'+data.map(d=>`<button class="row" data-m="${d.months}" aria-pressed="${d.months===sel}"><span class="t"><i class="dot" style="background:${tc(d.months)}"></i>${d.months} mo</span><span class="e">₹${whole(d.emiRounded)}</span><span class="m">${pct(d.rate)}</span><span class="m">${pct(d.achieved)}${isWarn(d.status)?'<b class="wn" title="'+d.status+'">!</b>':''}</span></button>`).join('');
-}
-document.addEventListener('click',e=>{const c=e.target.closest('[data-c]');if(c){const m=+c.dataset.c;openM=openM===m?null:m;sel=m;render();return}
- const b=e.target.closest('[data-m]');if(b){sel=+b.dataset.m;render()}});
-['amount','subvention','target','days'].forEach(id=>$(id).addEventListener('input',calculate));
-calculate();
-</script>
-<script>
-(function(){
-const $=id=>document.getElementById(id);
-const sv=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}},ld=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
-const root=document.documentElement;
-const setT=t=>{root.setAttribute('data-theme',t);$('theme').textContent=t==='light'?'☾':'☀'};
-const tb=document.createElement('button');tb.id='theme';tb.className='tbtn';tb.setAttribute('aria-label','Switch day or night mode');
-document.querySelector('.topin').appendChild(tb);
-tb.onclick=()=>{const n=root.getAttribute('data-theme')==='light'?'dark':'light';setT(n);sv('theme',n)};
-setT(ld('theme')||((window.matchMedia&&matchMedia('(prefers-color-scheme: light)').matches)?'light':'dark'));
-const words=n=>!(n>0)?'':n>=1e7?+(n/1e7).toFixed(2)+' crore':n>=1e5?+(n/1e5).toFixed(2)+' lakh':n>=1e3?+(n/1e3).toFixed(2)+' thousand':'';
-const am=$('amount'),aw=document.createElement('small');aw.id='aw';
-(am.closest('.field')||am.parentElement).insertAdjacentElement('afterend',aw);
-const setV=(id,v)=>{$(id).value=v;$(id).dispatchEvent(new Event('input'))};
-const pre=document.createElement('div');
-(am.closest('.inputs')||am.parentElement).insertAdjacentElement('afterend',pre);
-const row=(lab,id,vals)=>{const d=document.createElement('div');d.className='pre';d.innerHTML='<b>'+lab+'</b>';vals.forEach(v=>{const b=document.createElement('button');b.type='button';b.textContent=v+'%';b.onclick=()=>setV(id,v);d.appendChild(b)});pre.appendChild(d)};
-const rs=document.createElement('div');rs.className='pre';rs.innerHTML='<button type="button" id="rst">Reset all inputs</button>';pre.appendChild(rs);
-$('rst').onclick=()=>{setV('amount',100000);setV('subvention',2.5);setV('target',12);setV('days',16)};
-const tools=document.createElement('section');tools.id='tools';tools.className='panel';tools.style.gridColumn='1/-1';
-tools.innerHTML=`<div class="tl"><h2>Quote summary</h2><pre id="qt"></pre><div class="bt2"><button id="qc">Copy</button><button id="qh">Share</button><button id="qs2">Save quote</button><span class="ok" id="qm"></span></div></div>
-<div class="tl"><h2>Compare two tenures</h2><div class="bt2"><select id="ca"></select><span>vs</span><select id="cb"></select></div><div id="cr"></div></div>
-<div class="tl"><h2>Customer budget</h2><p class="sub2">Type the EMI the customer can afford each month.</p><div class="bt2"><input id="bg" type="number" inputmode="numeric" placeholder="₹ per month"></div><p id="bgr" class="ok" style="margin:10px 0 0"></p></div>
-<div class="tl" style="margin:0"><h2>Saved quotes</h2><div id="sl"></div></div>`;
-$('out').appendChild(tools);
-const sel2=[$('ca'),$('cb')];sel2.forEach(e=>{tenures.forEach(m=>e.add(new Option(m+' months',m)));e.onchange=cmp});
-$('ca').value=12;$('cb').value=24;
+
 const cur=()=>data.find(d=>d.months===sel)||data[0];
-const msg=t=>{$('qm').textContent=t;setTimeout(()=>$('qm').textContent='',1600)};
-const cp=t=>{const done=()=>msg('Copied');const fb=()=>{const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');done()}catch(e){msg('Copy failed')}a.remove()};try{navigator.clipboard.writeText(t).then(done,fb)}catch(e){fb()}};
-const qtext=()=>{const x=cur(),A=Number($('amount').value),bp=Math.round(-x.broken),has=x.rate>0&&bp>0;
- return 'NJ EMI Store quote\nLoan amount: ₹'+whole(A)+' ('+words(A)+')\nTenure: '+x.months+' months\nInterest rate: '+pct(x.rate)+'\n'+(has?'1st payment (broken-period interest): ₹'+whole(bp)+'\nThen '+x.months+' EMIs of: ₹'+whole(x.emiRounded):'Monthly EMI: ₹'+whole(x.emiRounded)+' x '+x.months)+'\nTotal EMIs: ₹'+whole(x.total)+'\nTotal interest: ₹'+whole(x.interest)+(has?'\nTotal with broken-period interest: ₹'+whole(x.total+bp):'')};
-$('qc').onclick=()=>cp(qtext());
-$('qh').onclick=()=>{const t=qtext(),M=window.median||window.gonative;if(window.NJ&&NJ.shareText)NJ.shareText(t);else if(M&&M.share&&M.share.sharePage)M.share.sharePage({url:'',text:t});else if(navigator.share)navigator.share({text:t}).catch(()=>{});else cp(t)};
-const store=()=>{try{return JSON.parse(ld('njq')||'[]')}catch(e){return[]}};
-const list=()=>{const q=store();$('sl').innerHTML=q.length?q.map((r,i)=>`<div class="sv"><span>${r.n}</span><span><button data-o="${i}">Open</button> <button data-x="${i}">✕</button></span></div>`).join(''):'<p class="sub2" style="margin:0">No saved quotes yet.</p>'};
-$('qs2').onclick=()=>{const q=store(),A=Number($('amount').value),d=new Date();q.unshift({n:'₹'+whole(A)+' · '+sel+' mo · '+d.getDate()+'/'+(d.getMonth()+1)+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'),a:$('amount').value,s:$('subvention').value,t:$('target').value,d:$('days').value,m:sel});sv('njq',JSON.stringify(q.slice(0,20)));list();msg('Saved')};
-$('sl').onclick=e=>{const o=e.target.dataset.o,x=e.target.dataset.x,q=store();if(o!=null){const r=q[o];$('subvention').value=r.s;$('target').value=r.t;$('days').value=r.d;sel=r.m;setV('amount',r.a)}if(x!=null){q.splice(x,1);sv('njq',JSON.stringify(q));list()}};
-function cmp(){const a=data.find(d=>d.months==$('ca').value),b=data.find(d=>d.months==$('cb').value);if(!a||!b)return;
- const r=(l,f,k)=>`<tr><td>${l}</td><td>${f(a[k])}</td><td>${f(b[k])}</td><td>${k==='rate'?(b[k]-a[k]>=0?'+':'−')+Math.abs(b[k]-a[k]).toFixed(2)+'%':(b[k]-a[k]>=0?'+':'−')+'₹'+whole(Math.abs(b[k]-a[k]))}</td></tr>`;
- const m=v=>'₹'+whole(v);$('cr').innerHTML='<table><tr><th></th><th>'+a.months+' mo</th><th>'+b.months+' mo</th><th>Change</th></tr>'+r('Rate',pct,'rate')+r('EMI',m,'emiRounded')+r('Total paid',m,'total')+r('Interest',m,'interest')+'</table>'}
-function bud(){const v=Number($('bg').value),el=$('bgr');if(!(v>0)){el.textContent='';return}
- const f=data.filter(d=>d.emiRounded<=v);el.textContent=f.length?'Fits from '+f[0].months+' months ('+f.length+' of '+data.length+' tenures). EMI at '+f[0].months+' mo: ₹'+whole(f[0].emiRounded):'No tenure fits. The lowest EMI is ₹'+whole(data[data.length-1].emiRounded)+' at '+data[data.length-1].months+' months.'}
-$('bg').addEventListener('input',bud);
-window.updTools=function(){if(!data.length)return;const A=Number($('amount').value);aw.textContent=words(A)?'= ₹'+words(A):'';
- const r=cur();$('qt').textContent=qtext();cmp();bud();
- document.querySelectorAll('.pre button:not(#rst)').forEach(b=>{const id=b.parentNode.firstChild.textContent==='Target IRR'?'target':'subvention';b.classList.toggle('on',Number($(id).value)===parseFloat(b.textContent))})};
-const _d=drawExtra;drawExtra=function(){_d();updTools()};
-const qi=document.createElement('button');qi.id='qi';qi.textContent='Share image';$('qh').insertAdjacentElement('afterend',qi);
-const mo=document.createElement('div');mo.id='shm';mo.hidden=true;
-mo.innerHTML='<div class="shb"><img id="shi" alt="Quote image"><p class="sub2" id="shn">Press and hold the image to save it, or tap Share.</p><div class="bt2"><button id="shs">Share</button><button id="shx">Close</button></div></div>';
-document.body.appendChild(mo);
-let shc=null;
 function qimg(){const x=cur(),A=Number($('amount').value),bp=Math.round(-x.broken),has=x.rate>0&&bp>0,c=document.createElement('canvas');
  c.width=720;c.height=has?930:860;const g=c.getContext('2d'),F='system-ui,-apple-system,Segoe UI,Roboto,sans-serif';
  g.fillStyle='#fff';g.fillRect(0,0,720,c.height);
@@ -571,13 +221,65 @@ function qimg(){const x=cur(),A=Number($('amount').value),bp=Math.round(-x.broke
  row(x.months+' EMIs of','₹'+whole(x.emiRounded));row('Total of EMIs','₹'+whole(x.total));row('Total interest','₹'+whole(x.interest));
  const d=new Date();g.textAlign='left';g.fillStyle='#94a3b8';g.font='500 22px '+F;
  g.fillText(d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear()+'  ·  Indicative quote',40,c.height-36);return c}
-qi.onclick=()=>{if(!data.length)return;shc=qimg();$('shi').src=shc.toDataURL('image/png');$('shn').textContent='Press and hold the image to save it, or tap Share.';mo.hidden=false};
-$('shx').onclick=()=>{mo.hidden=true};
-mo.onclick=e=>{if(e.target===mo)mo.hidden=true};
-$('shs').onclick=()=>{if(!shc)return;if(window.NJ&&NJ.shareImage){NJ.shareImage(shc.toDataURL('image/png').split(',')[1],qtext());return}shc.toBlob(b=>{try{const f=new File([b],'emi-quote.png',{type:'image/png'});
- if(navigator.canShare&&navigator.canShare({files:[f]}))navigator.share({files:[f]}).catch(()=>{});else $('shn').textContent='Sharing is not available here. Press and hold the image to save it.'}catch(e){$('shn').textContent='Press and hold the image to save it.'}},'image/png')};
-list();updTools();
-})();
+const lakh=A=>A>=1e7?(A/1e7).toFixed(2)+' Cr':A>=1e5?(A/1e5).toFixed(2)+' Lakh':A>=1e3?(A/1e3).toFixed(2)+' Thousand':'';
+const ld=k=>{try{return localStorage.getItem(k)}catch(e){return null}},sv=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+const D={amount:100000,subvention:2.5,target:12,days:16};
+/* theme: auto / night / day */
+function theme(m,keep){const t=m==='auto'?(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'):m;if(keep)sv('njt',t);document.documentElement.dataset.theme=t;document.querySelectorAll('#sw button').forEach(b=>b.classList.toggle('on',b.dataset.t===t))}
+$('sw').onclick=e=>{const b=e.target.closest('button');if(b)theme(b.dataset.t,1)};theme(ld('njt')||'auto');
+/* tabs */
+$('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return;document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id==='v-'+b.dataset.v));document.querySelectorAll('#nav button').forEach(x=>x.classList.toggle('on',x===b));window.scrollTo(0,0)};
+/* presets */
+document.querySelectorAll('.pr').forEach(p=>{const v=p.dataset.v.split(','),l=p.dataset.l.split(',');p.innerHTML=v.map((x,i)=>`<button data-x="${x}">${l[i]}</button>`).join('');p.onclick=e=>{const b=e.target.closest('button');if(b){$(p.dataset.f).value=b.dataset.x;calculate()}}});
+$('rst').onclick=()=>{for(const k in D)$(k).value=D[k];calculate()};
+/* calculate + render */
+function calculate(){
+ const A=Number($('amount').value),sb=Number($('subvention').value),tg=Number($('target').value),dy=Number($('days').value);
+ if(!($('amount').value&&$('target').value)||!(A>0)||sb<0||tg<0||dy<0){$('err').textContent='Enter a loan amount above 0 and a target IRR. Subvention and days can be 0 or blank.';$('res').hidden=true;return}
+ $('err').textContent='';$('res').hidden=false;
+ const ex=A*(sb/100)/1.18;data=tenures.map(m=>solveRate(A,ex,dy,m,tg));
+ $('aw').textContent=lakh(A)?'= ₹'+lakh(A):'';$('sx').textContent='Ex-GST: ₹'+whole(ex);
+ $('mini').innerHTML=[['Net Initial Outflow','₹'+whole(A-ex)],['Target IRR',pct(tg)],['Subvention ex-GST','₹'+whole(ex)],['Broken-period days',dy]].map(x=>`<div><span>${x[0]}</span><b>${x[1]}</b></div>`).join('');
+ document.querySelectorAll('.pr button').forEach(b=>b.classList.toggle('on',Number(b.dataset.x)===Number($(b.parentNode.dataset.f).value)));
+ render();
+}
+function render(){
+ const x=cur();
+ $('tc').innerHTML=data.map(d=>`<button data-m="${d.months}" class="${d.months===sel?'on':''}">${d.months} mo</button>`).join('');
+ $('hero').innerHTML=`<small>Monthly EMI for ${x.months} months</small><div class="big">₹${whole(x.emiRounded)}<em> / month</em></div><div class="kp"><div><span>Customer rate</span><b>${pct(x.rate)}</b></div><div><span>Achieved NJC IRR</span><b>${pct(x.achieved)}</b></div><div><span>Total repayment</span><b>₹${whole(x.total)}</b></div><div><span>Total interest</span><b>₹${whole(Math.max(0,x.interest))}</b></div></div>`;
+ $('bk').innerHTML=breakup(x);
+ const mx=Math.max(...data.map(d=>d.emiRounded));
+ $('mx').tBodies[0].innerHTML=data.map(d=>`<tr data-m="${d.months}" class="${d.months===sel?'on':''}"><td>${d.months} mo</td><td>${pct(d.rate)}</td><td>${whole(d.emiRounded)}<div class="mb" style="width:${Math.max(4,Math.sqrt(d.emiRounded/mx)*100)}%"></div></td><td>${whole(d.total)}</td><td>${pct(d.achieved)}</td></tr>`).join('');
+ $('qt').innerHTML=qcard();cmp();bud();
+}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-m]');if(b&&b.closest('#tc,#mx')){sel=+b.dataset.m;render()}});
+['amount','subvention','target','days'].forEach(id=>$(id).addEventListener('input',calculate));
+/* quote */
+function qcard(){const x=cur(),A=Number($('amount').value),bp=Math.round(-x.broken),has=x.rate>0&&bp>0,r=(l,v,c)=>`<div class="qr ${c||''}"><span>${l}</span><b>${v}</b></div>`;
+ return `<div class="qh"><span>NJ EMI Store quote</span><span>${x.months} months</span></div><div class="qe"><div><small>Monthly EMI</small><b>₹${whole(x.emiRounded)}</b></div><em>${pct(x.rate)} p.a.</em></div>`+r('Loan amount','₹'+whole(A)+(lakh(A)?' <i>('+lakh(A)+')</i>':''))+(has?r('1st payment · broken-period interest','₹'+whole(bp),'bp')+r('Then',x.months+' EMIs of ₹'+whole(x.emiRounded)):r('Number of EMIs',x.months))+r('Total EMIs','₹'+whole(x.total))+r('Total interest','₹'+whole(x.interest))+(has?r('Total with broken-period interest','₹'+whole(x.total+bp)):'')}
+function qtext(){const x=cur(),A=Number($('amount').value),bp=Math.round(-x.broken),has=x.rate>0&&bp>0;
+ return 'NJ EMI Store quote\nLoan amount: ₹'+whole(A)+'\nTenure: '+x.months+' months\nInterest rate: '+pct(x.rate)+'\n'+(has?'1st payment (broken-period interest): ₹'+whole(bp)+'\nThen '+x.months+' EMIs of: ₹'+whole(x.emiRounded):'Monthly EMI: ₹'+whole(x.emiRounded)+' x '+x.months)+'\nTotal EMIs: ₹'+whole(x.total)+'\nTotal interest: ₹'+whole(x.interest)+(has?'\nTotal with broken-period interest: ₹'+whole(x.total+bp):'')}
+const msg=t=>{$('qm').textContent=t;setTimeout(()=>$('qm').textContent='',1600)};
+const cp=t=>{const ok=()=>msg('Copied'),fb=()=>{const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');ok()}catch(e){msg('Copy failed')}a.remove()};try{navigator.clipboard.writeText(t).then(ok,fb)}catch(e){fb()}};
+$('qc').onclick=()=>cp(qtext());
+$('qh').onclick=()=>{const t=qtext(),M=window.median||window.gonative;if(window.NJ&&NJ.shareText)NJ.shareText(t);else if(M&&M.share&&M.share.sharePage)M.share.sharePage({url:'',text:t});else if(navigator.share)navigator.share({text:t}).catch(()=>{});else cp(t)};
+let shc=null;
+$('qi').onclick=()=>{if(!data.length)return;shc=qimg();$('shi').src=shc.toDataURL('image/png');$('shn').textContent='Press and hold the image to save it, or tap Share.';$('shm').hidden=false};
+$('shx').onclick=()=>{$('shm').hidden=true};$('shm').onclick=e=>{if(e.target===$('shm'))$('shm').hidden=true};
+$('shs').onclick=()=>{if(!shc)return;if(window.NJ&&NJ.shareImage){NJ.shareImage(shc.toDataURL('image/png').split(',')[1],qtext());return}shc.toBlob(b=>{try{const f=new File([b],'emi-quote.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]}))navigator.share({files:[f]}).catch(()=>{});else $('shn').textContent='Sharing is not available here. Press and hold the image to save it.'}catch(e){$('shn').textContent='Press and hold the image to save it.'}},'image/png')};
+const store=()=>{try{return JSON.parse(ld('njq')||'[]')}catch(e){return[]}};
+function list(){const q=store();$('sl').innerHTML=q.length?q.map((r,i)=>`<div class="sv"><span>${r.n}</span><span><button data-o="${i}">Open</button> <button data-x="${i}">✕</button></span></div>`).join(''):'<div class="empty">No saved quotes yet.<br>Tap “Save quote” on the Quote tab to keep one.</div>'}
+$('qs').onclick=()=>{const q=store(),A=Number($('amount').value),x=cur();q.unshift({n:'₹'+whole(A)+' · '+x.months+' mo · '+new Date().toLocaleDateString('en-GB'),a:$('amount').value,s:$('subvention').value,t:$('target').value,d:$('days').value,m:sel});sv('njq',JSON.stringify(q.slice(0,30)));list();msg('Saved')};
+$('sl').onclick=e=>{const b=e.target.closest('button');if(!b)return;const q=store();if(b.dataset.o!=null){const r=q[b.dataset.o];if(r){$('amount').value=r.a;$('subvention').value=r.s;$('target').value=r.t;$('days').value=r.d;sel=r.m;calculate();document.querySelector('#nav [data-v=calc]').click()}}else if(b.dataset.x!=null){q.splice(b.dataset.x,1);sv('njq',JSON.stringify(q));list()}};
+/* compare + budget */
+tenures.forEach(m=>{$('ca').add(new Option(m+' months',m));$('cb').add(new Option(m+' months',m))});$('ca').value=12;$('cb').value=24;$('ca').onchange=$('cb').onchange=()=>cmp();
+function cmp(){const a=data.find(d=>d.months==$('ca').value),b=data.find(d=>d.months==$('cb').value);if(!a||!b)return;
+ const r=(l,f,k)=>{const d=b[k]-a[k];return `<tr><td>${l}</td><td>${f(a[k])}</td><td>${f(b[k])}</td><td class="${d<0?'gd':d>0?'bd':''}">${(d>=0?'+':'−')+(k==='rate'?Math.abs(d).toFixed(2)+'%':'₹'+whole(Math.abs(d)))}</td></tr>`},m=v=>'₹'+whole(v);
+ $('cr').innerHTML='<table><thead><tr><th></th><th>'+a.months+' mo</th><th>'+b.months+' mo</th><th>Change</th></tr></thead><tbody>'+r('Rate',pct,'rate')+r('EMI',m,'emiRounded')+r('Total paid',m,'total')+r('Interest',m,'interest')+'</tbody></table>'}
+function bud(){const v=Number($('bg').value),el=$('bgr');if(!(v>0)){el.textContent='';return}const f=data.filter(d=>d.emiRounded<=v);el.classList.toggle('no',!f.length);
+ el.innerHTML=f.length?`<b>Fits from ${f[0].months} months</b> · ${f.length} of ${data.length} tenures<div class="bc">${f.map(d=>`<span>${d.months} mo <em>₹${whole(d.emiRounded)}</em></span>`).join('')}</div>`:`No tenure fits. The lowest EMI is <b>₹${whole(data[data.length-1].emiRounded)}</b> at ${data[data.length-1].months} months.`}
+$('bg').addEventListener('input',bud);
+list();calculate();
 </script>
 </body>
 </html>
