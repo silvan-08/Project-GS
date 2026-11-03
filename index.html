@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>NJ EMI Store</title>
+<title>EMI Calculator</title>
 <style>
 :root{--bg:#080e1c;--card:#0f1930;--card2:#0b1224;--line:#1b2a4a;--ink:#e8eefc;--mute:#8a99bb;--acc:#22d3ee;--gold:#fbbf24;--chip:#16233f;--good:#34d399;--bad:#fb7185;--on:#04121c}
 :root[data-theme=light]{--bg:#eef2f9;--card:#fff;--card2:#f4f7fc;--line:#d8e1ef;--ink:#0f1c36;--mute:#5a6b8c;--acc:#0891b2;--gold:#d97706;--chip:#e5ecf7;--good:#15803d;--bad:#dc2626;--on:#fff}
@@ -50,7 +50,7 @@ th:first-child,td:first-child{text-align:left}
 tr.bp td{background:#fbbf2420;color:var(--gold);font-weight:700}
 tfoot td{font-weight:800;border-bottom:0}
 .bkw{max-height:360px;overflow:auto;border:1px solid var(--line);border-radius:12px;padding:0 8px}
-.note{color:var(--mute);font-size:12.5px;margin:0 0 8px}
+.note{color:var(--mute);font-size:12.5px;margin:0 0 8px;line-height:1.4}
 #mx tr{cursor:pointer}#mx tr.on td{background:#22d3ee1c;font-weight:700}
 .mb{height:5px;border-radius:3px;background:var(--acc);margin-top:4px;margin-left:auto}
 .q{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--card2)}
@@ -61,6 +61,7 @@ tfoot td{font-weight:800;border-bottom:0}
 .bt{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;align-items:center}
 .bt button{border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:99px;padding:11px 17px;font:700 14px inherit;font-family:inherit;cursor:pointer}
 .bt button.p{background:linear-gradient(120deg,var(--acc),#7dd3a8);color:var(--on);border:0}
+.bt button.w{background:linear-gradient(120deg,#10b981,#059669);color:#fff;border:0}
 .bt .ok{color:var(--good);font-weight:700;font-size:13px}
 .sv{display:flex;justify-content:space-between;align-items:center;padding:11px 12px;border:1px solid var(--line);border-radius:14px;margin-bottom:8px;background:var(--card2);gap:8px}
 .sv button{border:0;background:var(--chip);color:var(--ink);border-radius:9px;padding:6px 10px;font-weight:700;cursor:pointer}
@@ -68,7 +69,8 @@ tfoot td{font-weight:800;border-bottom:0}
 select{background:var(--bg);color:var(--ink);border:1.5px solid var(--line);border-radius:14px;padding:12px;font:700 15px inherit;font-family:inherit;flex:1;min-width:0}
 .cmpb{display:flex;gap:10px;align-items:center;margin-bottom:12px;color:var(--mute)}
 td.gd{color:var(--good);font-weight:800}td.bd{color:var(--bad);font-weight:800}
-.bgr{margin-top:10px;background:#22d3ee14;border:1px solid #22d3ee44;border-radius:14px;padding:11px 13px;font-weight:600}.bgr:empty{display:none}.bgr.no{background:#fb718514;border-color:#fb718544}
+.bgr{margin-top:10px;background:#22d3ee14;border:1px solid #22d3ee44;border-radius:14px;padding:11px 13px;font-size:13.5px;line-height:1.5}.bgr:empty{display:none}.bgr.no{background:#fb718514;border-color:#fb718544}
+.bgr b{color:var(--ink)}
 .bc{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.bc span{background:var(--chip);border-radius:99px;padding:5px 10px;font-size:12px;font-weight:700}.bc em{font-style:normal;color:var(--acc)}
 ol{padding-left:20px;margin:0}li{margin-bottom:10px}
 nav{position:fixed;left:0;right:0;bottom:0;background:var(--card2);border-top:1px solid var(--line);z-index:9}
@@ -80,76 +82,157 @@ nav button.mid{margin-top:-30px}nav button.mid span.c{width:60px;height:60px;bor
 nav button.mid svg{stroke:#0b1a24}
 #shm{position:fixed;inset:0;background:#000b;display:grid;place-items:center;z-index:20;padding:14px}#shm[hidden]{display:none}
 .shb{background:var(--card);border-radius:18px;padding:12px;max-width:420px;width:100%;max-height:92vh;overflow:auto}#shi{width:100%;border-radius:10px;display:block;margin-bottom:8px}
+.pick{max-width:560px;margin:auto;padding:12px 14px 0}
+.pick select{width:100%;padding:14px;font-size:16px;font-weight:800;border-radius:16px;background:var(--card)}
+.mxt{width:100%}.mxt tr[data-s]{cursor:pointer}.mxt tr.on td{background:#22d3ee1c;font-weight:700}
+.bk2{max-height:380px;overflow:auto;border:1px solid var(--line);border-radius:12px;padding:0 8px}
+.vt{display:flex;gap:6px;background:var(--chip);border-radius:14px;padding:4px;margin-bottom:12px}.vt button{flex:1;border:0;background:none;color:var(--mute);padding:9px 4px;border-radius:11px;font:700 13px inherit;font-family:inherit;cursor:pointer}
+.vt button.on{background:var(--card);color:var(--acc);box-shadow:0 1px 3px #0003}
+.vr{display:grid;grid-template-columns:58px 1fr auto;gap:8px;align-items:center;width:100%;border:0;background:none;color:var(--ink);font:inherit;padding:6px 6px;border-radius:10px;cursor:pointer;text-align:left}
+.vr.on{background:#22d3ee1a}.vr .t{font-size:13px;color:var(--mute);font-weight:700;white-space:nowrap}.vr.on .t{color:var(--ink)}
+.vr .tr{height:14px;border-radius:7px;background:var(--chip);overflow:hidden;display:flex}.vr .tr i{display:block;height:100%}
+.vr .v{font-size:13px;font-weight:800;min-width:74px;text-align:right}
+.vl{display:flex;gap:14px;font-size:12px;color:var(--mute);margin:2px 0 8px}.vl i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px}
+body[data-calc="nj"] .calc-oth { display: none !important; }
+body[data-calc="oth"] .calc-nj { display: none !important; }
 </style>
 </head>
-<body>
+<body data-calc="nj">
 <header>
  <div class="lg">₹</div>
- <div><h1>NJ EMI Store</h1><p>Exact monthly EMI solved to target NJC IRR</p></div>
+ <div><h1>EMI Calculator</h1><p id="hsub">Exact monthly EMI solved to target NJC IRR</p></div>
  <div class="sw" id="sw"><button data-t="dark" title="Night">☾</button><button data-t="light" title="Day">☀</button></div>
 </header>
+<div class="pick"><select id="cs" aria-label="Choose calculator"></select></div>
 <main>
 <section class="view on" id="v-calc">
- <div class="card">
-  <div class="ch"><span class="ic">▦</span>Loan &amp; IRR Parameters<a id="rst">↻ Reset</a></div>
-  <div class="lb"><span>Asset / Loan Amount (incl. GST)</span><b id="aw"></b></div>
-  <div class="f"><i>₹</i><input id="amount" type="number" inputmode="decimal" min="0.01" step="0.01" value="100000"></div>
-  <div class="pr" data-f="amount" data-v="50000,100000,200000,500000,1000000" data-l="₹50k,₹1L,₹2L,₹5L,₹10L"></div>
-  <div class="lb"><span>Subvention incl. GST</span><span id="sx"></span></div>
-  <div class="f"><input id="subvention" type="number" inputmode="decimal" min="0" step="0.01" value="2.5"><i>%</i></div>
-  <div class="pr g" data-f="subvention" data-v="0,1.5,2,2.5,3.5,5" data-l="0%,1.5%,2%,2.5%,3.5%,5%"></div>
-  <div class="lb"><span>Target NJC IRR p.a.</span></div>
-  <div class="f"><input id="target" type="number" inputmode="decimal" min="0" step="0.01" value="12"><i>%</i></div>
-  <div class="pr" data-f="target" data-v="10,11,12,13,14,15,16" data-l="10%,11%,12%,13%,14%,15%,16%"></div>
-  <div class="lb"><span>Broken-period Days</span><span>360-day year basis</span></div>
-  <div class="f"><input id="days" type="number" inputmode="numeric" min="0" step="1" value="16"><i>days</i></div>
-  <p id="err" role="alert"></p>
-  <div class="mini" id="mini"></div>
+ <div class="calc-nj">
+  <div class="card">
+   <div class="ch"><span class="ic">▦</span>Loan &amp; IRR Parameters<a id="rst">↻ Reset</a></div>
+   <div class="lb"><span>Asset / Loan Amount (incl. GST)</span><b id="aw"></b></div>
+   <div class="f"><i>₹</i><input id="amount" type="number" inputmode="decimal" min="0.01" step="0.01" value="100000"></div>
+   <div class="pr" data-f="amount" data-v="50000,100000,200000,500000,1000000" data-l="₹50k,₹1L,₹2L,₹5L,₹10L"></div>
+   <div class="lb"><span>Subvention incl. GST</span><span id="sx"></span></div>
+   <div class="f"><input id="subvention" type="number" inputmode="decimal" min="0" step="0.01" value="2.5"><i>%</i></div>
+   <div class="pr g" data-f="subvention" data-v="0,1.5,2,2.5,3.5,5" data-l="0%,1.5%,2%,2.5%,3.5%,5%"></div>
+   <div class="lb"><span>Target NJC IRR p.a.</span></div>
+   <div class="f"><input id="target" type="number" inputmode="decimal" min="0" step="0.01" value="12"><i>%</i></div>
+   <div class="pr" data-f="target" data-v="10,11,12,13,14,15,16" data-l="10%,11%,12%,13%,14%,15%,16%"></div>
+   <div class="lb"><span>Broken-period Days</span><span>360-day year basis</span></div>
+   <div class="f"><input id="days" type="number" inputmode="numeric" min="0" step="1" value="16"><i>days</i></div>
+   <p id="err" role="alert"></p>
+   <div class="mini" id="mini"></div>
+  </div>
+  <div id="res">
+   <div class="tc" id="tc"></div>
+   <div class="hero" id="hero"></div>
+   <div class="card" id="viz"></div>
+  </div>
  </div>
- <div id="res">
-  <div class="tc" id="tc"></div>
-  <div class="hero" id="hero"></div>
-  <div class="card"><div class="ch"><span class="ic">☰</span>Payment break-up</div><p class="note" id="bnote"></p><div id="bk"></div></div>
+ <div class="calc-oth">
+  <div class="card" id="ocard"></div>
+  <div id="ores-wrap">
+   <div class="tc" id="otc"></div>
+   <div class="hero" id="ohero"></div>
+   <div class="card" id="oviz"></div>
+  </div>
  </div>
 </section>
 
-<section class="view" id="v-mx"><div class="card"><div class="ch"><span class="ic">≣</span>Tenure matrix</div><p class="note">Tap a row to select that tenure.</p>
- <table id="mx"><thead><tr><th>Tenure</th><th>Rate</th><th>EMI ₹</th><th>Total ₹</th><th>IRR</th></tr></thead><tbody></tbody></table></div></section>
+<section class="view" id="v-mx">
+ <div class="calc-nj">
+  <div class="card"><div class="ch"><span class="ic">≣</span>Tenure matrix</div><p class="note">Tap a row to select that tenure.</p>
+  <table id="mx"><thead><tr><th>Tenure</th><th>Rate</th><th>EMI ₹</th><th>Total ₹</th><th>IRR</th></tr></thead><tbody></tbody></table></div>
+  <div class="card"><div class="ch"><span class="ic">☰</span>Payment break-up</div><p class="note" id="bnote"></p><div id="bk"></div></div>
+ </div>
+ <div class="calc-oth">
+  <div class="card" id="omx-wrap"><div id="omx"></div></div>
+  <div class="card" id="obk-wrap"><div class="ch"><span class="ic">☰</span><span id="obk-title">Payment break-up</span></div><p class="note" id="obnote"></p><div id="obk"></div></div>
+ </div>
+</section>
 
-<section class="view" id="v-q"><div class="card"><div class="ch"><span class="ic">✉</span>Quote</div><div class="q" id="qt"></div>
- <div class="bt"><button id="qc">Copy</button><button class="p" id="qh">Share</button><button class="p" id="qi">Share image</button><button id="qs">Save quote</button><span class="ok" id="qm"></span></div></div>
- <div class="card"><div class="ch"><span class="ic">★</span>Saved quotes</div><div id="sl"></div></div></section>
+<section class="view" id="v-q">
+ <div class="calc-nj">
+  <div class="card">
+   <div class="ch"><span class="ic">✉</span>Quote</div><div class="q" id="qt"></div>
+   <div class="lb" style="margin-top:16px"><span>Send quote via WhatsApp</span></div>
+   <div class="f"><i>+91</i><input id="qphone" type="tel" maxlength="10" placeholder="Customer phone (optional)"></div>
+   <div class="bt"><button class="w" id="qw">WhatsApp</button><button id="qc">Copy</button><button class="p" id="qh">Share</button><button class="p" id="qi">Share image</button><button id="qs">Save quote</button><span class="ok" id="qm"></span></div>
+  </div>
+  <div class="card"><div class="ch"><span class="ic">★</span>Saved quotes</div><div id="sl"></div></div>
+ </div>
+ <div class="calc-oth">
+  <div class="card" id="oqt-wrap">
+   <div class="ch"><span class="ic">✉</span>Quote</div><div class="q" id="oqt"></div>
+   <div class="lb" style="margin-top:16px"><span>Send quote via WhatsApp</span></div>
+   <div class="f"><i>+91</i><input id="oqphone" type="tel" maxlength="10" placeholder="Customer phone (optional)"></div>
+   <div class="bt"><button class="w" id="oqw">WhatsApp</button><button id="oqc">Copy</button><button class="p" id="oqh">Share</button><span class="ok" id="oqm"></span></div>
+  </div>
+ </div>
+</section>
 
-<section class="view" id="v-cmp"><div class="card"><div class="ch"><span class="ic">⇄</span>Compare two tenures</div>
- <div class="cmpb"><select id="ca"></select>vs<select id="cb"></select></div><div id="cr"></div></div>
- <div class="card"><div class="ch"><span class="ic">◎</span>Customer budget</div><p class="note">Type the EMI the customer can afford each month.</p>
- <div class="f"><i>₹</i><input id="bg" type="number" inputmode="numeric" placeholder="per month"></div><div class="bgr" id="bgr"></div></div></section>
+<section class="view" id="v-cmp">
+ <div class="calc-nj">
+  <div class="card"><div class="ch"><span class="ic">⇄</span>Compare two tenures</div>
+  <div class="cmpb"><select id="ca"></select>vs<select id="cb"></select></div>
+  <div id="c-ins" class="bgr" style="display:block;margin-bottom:12px"></div>
+  <div id="cr"></div>
+  <div id="c-sb" style="margin-top:16px"></div>
+  <div class="bt" id="c-sh-wrap"><button class="p" id="c-sh">Share comparison</button><span class="ok" id="c-sh-m"></span></div>
+  </div>
+  <div class="card"><div class="ch"><span class="ic">◎</span>Customer budget</div><p class="note">Type the max EMI the customer can afford each month to find fitting tenures.</p>
+  <div class="f"><i>₹</i><input id="bg" type="number" inputmode="numeric" placeholder="per month"></div><div class="bgr" id="bgr"></div></div>
+ </div>
+ <div class="calc-oth">
+  <div class="card" id="ocmp-wrap">
+   <div class="ch"><span class="ic">⇄</span>Compare two options</div>
+   <div id="ocmp-body">
+    <div class="cmpb"><select id="oca"></select>vs<select id="ocb"></select></div>
+    <div id="oc-ins" class="bgr" style="display:block;margin-bottom:12px"></div>
+    <div id="ocr"></div>
+    <div id="oc-sb" style="margin-top:16px"></div>
+    <div class="bt" id="oc-sh-wrap"><button class="p" id="oc-sh">Share comparison</button><span class="ok" id="oc-sh-m"></span></div>
+   </div>
+   <div id="ocmp-err" class="empty" style="display:none">Enter a period greater than 1 year to compare options.</div>
+  </div>
+  <div class="card" id="orev-wrap">
+   <div class="ch"><span class="ic">◎</span><span id="orev-title">Goal Tool</span></div><p class="note" id="orev-note"></p>
+   <div class="f"><i id="orev-u">₹</i><input id="orev-val" type="number" inputmode="decimal" placeholder="value"></div>
+   <div class="bgr" id="orev-res"></div>
+  </div>
+ </div>
+</section>
 
 <section class="view" id="v-guide">
- <div class="card"><div class="ch"><span class="ic">?</span>How to use</div>
- <ol>
-  <li><b>Enter the deal</b> on the Calculator tab: the loan amount, the subvention %, the target IRR % and the broken-period days. Tap the small buttons for quick values.</li>
-  <li><b>Pick a tenure</b> from the row of buttons (3 to 84 months). The big card shows that tenure's EMI, customer rate, total repayment and interest.</li>
-  <li><b>Read the payment break-up</b> below it. If there is a broken period, payment 1 is the broken-period interest and the EMIs start after it.</li>
-  <li><b>Matrix</b> shows every tenure in one table. Tap a row to select that tenure.</li>
-  <li><b>Quote</b> (the round button) makes a customer-ready quote. Copy or share it as text, share it as an image, or save it to open later.</li>
-  <li><b>Compare</b> puts two tenures side by side. The budget box finds the tenures that fit the EMI a customer can pay.</li>
- </ol></div>
- <div class="card"><div class="ch"><span class="ic">i</span>What the boxes mean</div>
- <ol>
-  <li><b>Loan amount:</b> the asset or loan amount including GST.</li>
-  <li><b>Subvention:</b> the % of the loan received from the brand or dealer, including GST. The card also shows it without GST.</li>
-  <li><b>Target IRR:</b> the yearly return you want. The calculator finds the customer interest rate that reaches it for each tenure.</li>
-  <li><b>Broken-period days:</b> the days between the loan start and the first EMI date. The interest for these days is charged as payment 1.</li>
-  <li><b>Net initial outflow:</b> the loan amount minus the subvention received without GST.</li>
- </ol></div>
- <div class="card"><div class="ch"><span class="ic">✓</span>Good to know</div>
- <ol>
-  <li>Subvention and days can be left blank, which counts as 0. With both at 0, the customer rate equals your target IRR.</li>
-  <li>The customer rate is rounded to 2 decimals before the EMI is worked out, the same way the EMI Store site does it.</li>
-  <li>The customer rate never goes below 0%. If your target is already reached at 0%, the rate stays at 0%.</li>
-  <li>Saved quotes stay on this phone. Use the ☾ and ☀ buttons at the top to switch between night and day colours.</li>
- </ol></div>
+ <div class="card calc-oth"><div class="ch"><span class="ic">?</span>How to use</div>
+  <p class="note"><b>Other Calculators:</b><br><br>1. Enter your parameters in the Calculator tab. Use the quick-select pills below the inputs to quickly switch values.<br>2. Check the Matrix tab for different time periods and the full monthly payment schedule.<br>3. Use the Quote tab to copy or share a summary.<br>4. The Compare tab lets you evaluate two options side-by-side.</p>
+ </div>
+ <div class="calc-nj">
+  <div class="card"><div class="ch"><span class="ic">?</span>How to use</div>
+  <ol>
+   <li><b>Choose a calculator</b> from the dropdown at the top.</li>
+   <li><b>Enter the deal</b> on the Calculator tab: the loan amount, the subvention %, the target IRR % and the broken-period days. Tap the small buttons for quick values.</li>
+   <li><b>Pick a tenure</b> from the row of buttons (3 to 84 months). The big card shows that tenure's EMI, customer rate, total repayment and interest.</li>
+   <li><b>Matrix</b> shows every tenure in one table, and the full payment break-up below it. Tap a row to select that tenure. If there is a broken period, payment 1 is the broken-period interest.</li>
+   <li><b>Quote</b> (the round button) makes a customer-ready quote. Type a phone number to instantly WhatsApp it, or copy/share it as text or an image.</li>
+   <li><b>Compare</b> puts two tenures side by side. The budget box finds the tenures that fit the EMI a customer can pay.</li>
+  </ol></div>
+  <div class="card"><div class="ch"><span class="ic">i</span>What the boxes mean</div>
+  <ol>
+   <li><b>Loan amount:</b> the asset or loan amount including GST.</li>
+   <li><b>Subvention:</b> the % of the loan received from the brand or dealer, including GST. The card also shows it without GST.</li>
+   <li><b>Target IRR:</b> the yearly return you want. The calculator finds the customer interest rate that reaches it for each tenure.</li>
+   <li><b>Broken-period days:</b> the days between the loan start and the first EMI date. The interest for these days is charged as payment 1.</li>
+   <li><b>Net initial outflow:</b> the loan amount minus the subvention received without GST.</li>
+  </ol></div>
+  <div class="card"><div class="ch"><span class="ic">✓</span>Good to know</div>
+  <ol>
+   <li>Subvention and days can be left blank, which counts as 0. With both at 0, the customer rate equals your target IRR.</li>
+   <li>The customer rate is rounded to 2 decimals before the EMI is worked out, the same way the EMI Store site does it.</li>
+   <li>The customer rate never goes below 0%. If your target is already reached at 0%, the rate stays at 0%.</li>
+   <li>Saved quotes stay on this phone. Use the ☾ and ☀ buttons at the top to switch between night and day colours.</li>
+  </ol></div>
+ </div>
 </section>
 </main>
 <p id="bnote2" hidden></p>
@@ -162,12 +245,13 @@ nav button.mid svg{stroke:#0b1a24}
  <button data-v="guide"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>Guide</button>
 </div></nav>
 <script>
-
 const tenures=[3,6,9,12,18,24,36,48,60,72,84];
 const whole=n=>Number.isFinite(n)?Math.round(n).toLocaleString('en-IN'):'—';
 const pct=n=>Number.isFinite(n)?n.toFixed(2)+'%':'—';
+const num=str=>Number(String(str).replace(/[^0-9.-]+/g,""))||0;
 const $=id=>document.getElementById(id);
-let data=[],sel=12;
+let data=[],sel=12,cmpShareTxt='';
+
 function emi(p,a,m){const r=a/100/12;if(Math.abs(r)<1e-12)return p/m;const f=Math.pow(1+r,m);return p*r*f/(f-1)}
 function brokenPeriod(p,a,d){return a>0?-(p*(a/100)/360)*d:0}
 function monthlyIRR(flows){
@@ -210,7 +294,7 @@ function qimg(){const x=cur(),A=Number($('amount').value),bp=Math.round(-x.broke
  c.width=720;c.height=has?930:860;const g=c.getContext('2d'),F='system-ui,-apple-system,Segoe UI,Roboto,sans-serif';
  g.fillStyle='#fff';g.fillRect(0,0,720,c.height);
  const gr=g.createLinearGradient(0,0,720,0);gr.addColorStop(0,'#1a1260');gr.addColorStop(1,'#0e7490');g.fillStyle=gr;g.fillRect(0,0,720,150);
- g.fillStyle='#fff';g.font='700 38px '+F;g.fillText('NJ EMI Store',40,70);g.globalAlpha=.8;g.font='500 24px '+F;g.fillText('EMI quote',40,110);g.globalAlpha=1;
+ g.fillStyle='#fff';g.font='700 38px '+F;g.fillText('EMI Calculator',40,70);g.globalAlpha=.8;g.font='500 24px '+F;g.fillText('EMI quote',40,110);g.globalAlpha=1;
  g.fillStyle='#64748b';g.font='500 24px '+F;g.fillText('Monthly EMI for '+x.months+' months',40,215);
  g.fillStyle='#0f172a';g.font='800 84px '+F;g.fillText('₹'+whole(x.emiRounded),40,305);
  let y=385;const row=(l,v,w)=>{g.strokeStyle='#e2e8f0';g.lineWidth=2;g.beginPath();g.moveTo(40,y-42);g.lineTo(680,y-42);g.stroke();
@@ -224,14 +308,24 @@ function qimg(){const x=cur(),A=Number($('amount').value),bp=Math.round(-x.broke
 const lakh=A=>A>=1e7?(A/1e7).toFixed(2)+' Cr':A>=1e5?(A/1e5).toFixed(2)+' Lakh':A>=1e3?(A/1e3).toFixed(2)+' Thousand':'';
 const ld=k=>{try{return localStorage.getItem(k)}catch(e){return null}},sv=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
 const D={amount:100000,subvention:2.5,target:12,days:16};
+
 /* theme: auto / night / day */
 function theme(m,keep){const t=m==='auto'?(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'):m;if(keep)sv('njt',t);document.documentElement.dataset.theme=t;document.querySelectorAll('#sw button').forEach(b=>b.classList.toggle('on',b.dataset.t===t))}
 $('sw').onclick=e=>{const b=e.target.closest('button');if(b)theme(b.dataset.t,1)};theme(ld('njt')||'auto');
-/* tabs */
-$('nav').onclick=e=>{const b=e.target.closest('button');if(!b)return;document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id==='v-'+b.dataset.v));document.querySelectorAll('#nav button').forEach(x=>x.classList.toggle('on',x===b));window.scrollTo(0,0)};
+
+/* tabs update */
+$('nav').onclick=e=>{
+ const b=e.target.closest('button');
+ if(!b)return;
+ document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id==='v-'+b.dataset.v));
+ document.querySelectorAll('#nav button').forEach(x=>x.classList.toggle('on',x===b));
+ window.scrollTo(0,0);
+};
+
 /* presets */
 document.querySelectorAll('.pr').forEach(p=>{const v=p.dataset.v.split(','),l=p.dataset.l.split(',');p.innerHTML=v.map((x,i)=>`<button data-x="${x}">${l[i]}</button>`).join('');p.onclick=e=>{const b=e.target.closest('button');if(b){$(p.dataset.f).value=b.dataset.x;calculate()}}});
 $('rst').onclick=()=>{for(const k in D)$(k).value=D[k];calculate()};
+
 /* calculate + render */
 function calculate(){
  const A=Number($('amount').value),sb=Number($('subvention').value),tg=Number($('target').value),dy=Number($('days').value);
@@ -250,35 +344,362 @@ function render(){
  $('bk').innerHTML=breakup(x);
  const mx=Math.max(...data.map(d=>d.emiRounded));
  $('mx').tBodies[0].innerHTML=data.map(d=>`<tr data-m="${d.months}" class="${d.months===sel?'on':''}"><td>${d.months} mo</td><td>${pct(d.rate)}</td><td>${whole(d.emiRounded)}<div class="mb" style="width:${Math.max(4,Math.sqrt(d.emiRounded/mx)*100)}%"></div></td><td>${whole(d.total)}</td><td>${pct(d.achieved)}</td></tr>`).join('');
- $('qt').innerHTML=qcard();cmp();bud();
+ $('qt').innerHTML=qcard();cmp();bud();drawViz();
 }
 document.addEventListener('click',e=>{const b=e.target.closest('[data-m]');if(b&&b.closest('#tc,#mx')){sel=+b.dataset.m;render()}});
 ['amount','subvention','target','days'].forEach(id=>$(id).addEventListener('input',calculate));
-/* quote */
+
+/* quote & whatsapp */
 function qcard(){const x=cur(),A=Number($('amount').value),bp=Math.round(-x.broken),has=x.rate>0&&bp>0,r=(l,v,c)=>`<div class="qr ${c||''}"><span>${l}</span><b>${v}</b></div>`;
- return `<div class="qh"><span>NJ EMI Store quote</span><span>${x.months} months</span></div><div class="qe"><div><small>Monthly EMI</small><b>₹${whole(x.emiRounded)}</b></div><em>${pct(x.rate)} p.a.</em></div>`+r('Loan amount','₹'+whole(A)+(lakh(A)?' <i>('+lakh(A)+')</i>':''))+(has?r('1st payment · broken-period interest','₹'+whole(bp),'bp')+r('Then',x.months+' EMIs of ₹'+whole(x.emiRounded)):r('Number of EMIs',x.months))+r('Total EMIs','₹'+whole(x.total))+r('Total interest','₹'+whole(x.interest))+(has?r('Total with broken-period interest','₹'+whole(x.total+bp)):'')}
+ return `<div class="qh"><span>EMI Calculator quote</span><span>${x.months} months</span></div><div class="qe"><div><small>Monthly EMI</small><b>₹${whole(x.emiRounded)}</b></div><em>${pct(x.rate)} p.a.</em></div>`+r('Loan amount','₹'+whole(A)+(lakh(A)?' <i>('+lakh(A)+')</i>':''))+(has?r('1st payment · broken-period interest','₹'+whole(bp),'bp')+r('Then',x.months+' EMIs of ₹'+whole(x.emiRounded)):r('Number of EMIs',x.months))+r('Total EMIs','₹'+whole(x.total))+r('Total interest','₹'+whole(x.interest))+(has?r('Total with broken-period interest','₹'+whole(x.total+bp)):'')}
 function qtext(){const x=cur(),A=Number($('amount').value),bp=Math.round(-x.broken),has=x.rate>0&&bp>0;
- return 'NJ EMI Store quote\nLoan amount: ₹'+whole(A)+'\nTenure: '+x.months+' months\nInterest rate: '+pct(x.rate)+'\n'+(has?'1st payment (broken-period interest): ₹'+whole(bp)+'\nThen '+x.months+' EMIs of: ₹'+whole(x.emiRounded):'Monthly EMI: ₹'+whole(x.emiRounded)+' x '+x.months)+'\nTotal EMIs: ₹'+whole(x.total)+'\nTotal interest: ₹'+whole(x.interest)+(has?'\nTotal with broken-period interest: ₹'+whole(x.total+bp):'')}
-const msg=t=>{$('qm').textContent=t;setTimeout(()=>$('qm').textContent='',1600)};
-const cp=t=>{const ok=()=>msg('Copied'),fb=()=>{const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');ok()}catch(e){msg('Copy failed')}a.remove()};try{navigator.clipboard.writeText(t).then(ok,fb)}catch(e){fb()}};
-$('qc').onclick=()=>cp(qtext());
-$('qh').onclick=()=>{const t=qtext(),M=window.median||window.gonative;if(window.NJ&&NJ.shareText)NJ.shareText(t);else if(M&&M.share&&M.share.sharePage)M.share.sharePage({url:'',text:t});else if(navigator.share)navigator.share({text:t}).catch(()=>{});else cp(t)};
+ return 'EMI Calculator quote\nLoan amount: ₹'+whole(A)+'\nTenure: '+x.months+' months\nInterest rate: '+pct(x.rate)+'\n'+(has?'1st payment (broken-period interest): ₹'+whole(bp)+'\nThen '+x.months+' EMIs of: ₹'+whole(x.emiRounded):'Monthly EMI: ₹'+whole(x.emiRounded)+' x '+x.months)+'\nTotal EMIs: ₹'+whole(x.total)+'\nTotal interest: ₹'+whole(x.interest)+(has?'\nTotal with broken-period interest: ₹'+whole(x.total+bp):'')}
+const msg=(id,t)=>{$(id).textContent=t;setTimeout(()=>$(id).textContent='',1600)};
+const cp=(t,id)=>{const ok=()=>msg(id,'Copied'),fb=()=>{const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');ok()}catch(e){msg(id,'Failed')}a.remove()};try{navigator.clipboard.writeText(t).then(ok,fb)}catch(e){fb()}};
+
+const sendWA = (numId, text) => {
+ let n = $(numId).value.replace(/\D/g, '');
+ if(n.length === 10) n = '91' + n;
+ window.open(`https://wa.me/${n}?text=${encodeURIComponent(text)}`, '_blank');
+};
+$('qw').onclick=()=>sendWA('qphone', qtext());
+$('qc').onclick=()=>cp(qtext(),'qm');
+$('qh').onclick=()=>{const t=qtext(),M=window.median||window.gonative;if(window.NJ&&NJ.shareText)NJ.shareText(t);else if(M&&M.share&&M.share.sharePage)M.share.sharePage({url:'',text:t});else if(navigator.share)navigator.share({text:t}).catch(()=>{});else cp(t,'qm')};
+$('c-sh').onclick=()=>cp(cmpShareTxt, 'c-sh-m');
+
 let shc=null;
 $('qi').onclick=()=>{if(!data.length)return;shc=qimg();$('shi').src=shc.toDataURL('image/png');$('shn').textContent='Press and hold the image to save it, or tap Share.';$('shm').hidden=false};
 $('shx').onclick=()=>{$('shm').hidden=true};$('shm').onclick=e=>{if(e.target===$('shm'))$('shm').hidden=true};
 $('shs').onclick=()=>{if(!shc)return;if(window.NJ&&NJ.shareImage){NJ.shareImage(shc.toDataURL('image/png').split(',')[1],qtext());return}shc.toBlob(b=>{try{const f=new File([b],'emi-quote.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]}))navigator.share({files:[f]}).catch(()=>{});else $('shn').textContent='Sharing is not available here. Press and hold the image to save it.'}catch(e){$('shn').textContent='Press and hold the image to save it.'}},'image/png')};
+
 const store=()=>{try{return JSON.parse(ld('njq')||'[]')}catch(e){return[]}};
 function list(){const q=store();$('sl').innerHTML=q.length?q.map((r,i)=>`<div class="sv"><span>${r.n}</span><span><button data-o="${i}">Open</button> <button data-x="${i}">✕</button></span></div>`).join(''):'<div class="empty">No saved quotes yet.<br>Tap “Save quote” on the Quote tab to keep one.</div>'}
-$('qs').onclick=()=>{const q=store(),A=Number($('amount').value),x=cur();q.unshift({n:'₹'+whole(A)+' · '+x.months+' mo · '+new Date().toLocaleDateString('en-GB'),a:$('amount').value,s:$('subvention').value,t:$('target').value,d:$('days').value,m:sel});sv('njq',JSON.stringify(q.slice(0,30)));list();msg('Saved')};
+$('qs').onclick=()=>{const q=store(),A=Number($('amount').value),x=cur();q.unshift({n:'₹'+whole(A)+' · '+x.months+' mo · '+new Date().toLocaleDateString('en-GB'),a:$('amount').value,s:$('subvention').value,t:$('target').value,d:$('days').value,m:sel});sv('njq',JSON.stringify(q.slice(0,30)));list();msg('qm','Saved')};
 $('sl').onclick=e=>{const b=e.target.closest('button');if(!b)return;const q=store();if(b.dataset.o!=null){const r=q[b.dataset.o];if(r){$('amount').value=r.a;$('subvention').value=r.s;$('target').value=r.t;$('days').value=r.d;sel=r.m;calculate();document.querySelector('#nav [data-v=calc]').click()}}else if(b.dataset.x!=null){q.splice(b.dataset.x,1);sv('njq',JSON.stringify(q));list()}};
+
+const sbar = (lbl, P, I, unit) => {
+ let tot = P + I, wp = (P/tot)*100, wi = (I/tot)*100;
+ return `<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:13px;color:var(--mute);margin-bottom:6px"><span>${lbl}</span><b style="color:var(--ink)">₹${whole(tot)} ${unit}</b></div><div style="height:12px;border-radius:6px;display:flex;overflow:hidden;background:var(--chip)"><div style="width:${wp}%;background:var(--acc)"></div><div style="width:${wi}%;background:var(--gold)"></div></div></div>`;
+};
+
 /* compare + budget */
 tenures.forEach(m=>{$('ca').add(new Option(m+' months',m));$('cb').add(new Option(m+' months',m))});$('ca').value=12;$('cb').value=24;$('ca').onchange=$('cb').onchange=()=>cmp();
-function cmp(){const a=data.find(d=>d.months==$('ca').value),b=data.find(d=>d.months==$('cb').value);if(!a||!b)return;
+function cmp(){
+ const a=data.find(d=>d.months==$('ca').value),b=data.find(d=>d.months==$('cb').value);
+ if(!a||!b){$('c-ins').style.display='none';$('c-sh-wrap').style.display='none';return;}
  const r=(l,f,k)=>{const d=b[k]-a[k];return `<tr><td>${l}</td><td>${f(a[k])}</td><td>${f(b[k])}</td><td class="${d<0?'gd':d>0?'bd':''}">${(d>=0?'+':'−')+(k==='rate'?Math.abs(d).toFixed(2)+'%':'₹'+whole(Math.abs(d)))}</td></tr>`},m=v=>'₹'+whole(v);
- $('cr').innerHTML='<table><thead><tr><th></th><th>'+a.months+' mo</th><th>'+b.months+' mo</th><th>Change</th></tr></thead><tbody>'+r('Rate',pct,'rate')+r('EMI',m,'emiRounded')+r('Total paid',m,'total')+r('Interest',m,'interest')+'</tbody></table>'}
+ $('cr').innerHTML='<table><thead><tr><th></th><th>'+a.months+' mo</th><th>'+b.months+' mo</th><th>Change</th></tr></thead><tbody>'+r('Rate',pct,'rate')+r('EMI',m,'emiRounded')+r('Total paid',m,'total')+r('Interest',m,'interest')+'</tbody></table>';
+ 
+ const s=a.months<b.months?a:b, l=a.months<b.months?b:a;
+ $('c-ins').style.display='block'; $('c-sh-wrap').style.display='flex';
+ $('c-ins').innerHTML=`Choosing <b>${s.months} months</b> over ${l.months} months saves you <b>₹${whole(l.interest-s.interest)}</b> in total interest, but requires a <b>₹${whole(s.emiRounded-l.emiRounded)}</b> higher monthly EMI.`;
+ 
+ const P = Number($('amount').value);
+ $('c-sb').innerHTML = sbar(`${s.months} months`, P, s.interest, 'total paid') + sbar(`${l.months} months`, P, l.interest, 'total paid') + `<div class="vl" style="justify-content:center;margin-top:12px;font-weight:600"><span><i style="background:var(--acc)"></i>Principal</span><span><i style="background:var(--gold)"></i>Interest</span></div>`;
+ cmpShareTxt = `Comparison Quote\n${s.months} months: EMI ₹${whole(s.emiRounded)}, Total Interest ₹${whole(s.interest)}\n${l.months} months: EMI ₹${whole(l.emiRounded)}, Total Interest ₹${whole(l.interest)}\n\nInsight: Choosing ${s.months} months saves you ₹${whole(l.interest-s.interest)} in total interest, but increases EMI by ₹${whole(s.emiRounded-l.emiRounded)}.`;
+}
 function bud(){const v=Number($('bg').value),el=$('bgr');if(!(v>0)){el.textContent='';return}const f=data.filter(d=>d.emiRounded<=v);el.classList.toggle('no',!f.length);
  el.innerHTML=f.length?`<b>Fits from ${f[0].months} months</b> · ${f.length} of ${data.length} tenures<div class="bc">${f.map(d=>`<span>${d.months} mo <em>₹${whole(d.emiRounded)}</em></span>`).join('')}</div>`:`No tenure fits. The lowest EMI is <b>₹${whole(data[data.length-1].emiRounded)}</b> at ${data[data.length-1].months} months.`}
 $('bg').addEventListener('input',bud);
+
+/* ===== other calculators (dropdown) ===== */
+const fm=n=>'₹'+whole(n),p2=n=>Number.isFinite(n)?n.toFixed(2)+'%':'—';
+const CALCS={
+ hl:{n:'Home loan calculator',
+  rev:{t:'Max Property Eligibility', n:'Type the max EMI the customer can afford to find max property price.', u:'₹', p:'Max EMI budget',
+   c:(v, val)=>{
+    if(!(val>0)) return '';
+    const n = Math.round(v.Y)*12, r = v.R/1200;
+    const L = r===0 ? val*n : val * (Math.pow(1+r,n)-1) / (r*Math.pow(1+r,n));
+    const PR = L / (1 - v.DP/100);
+    return `Max loan amount: <b>₹${whole(L)}</b><br>Max property price: <b>₹${whole(PR)}</b>`;
+   }
+  },
+  f:[
+  ['PR','Property price','₹',6000000, '2500000,5000000,7500000,10000000', '₹25L,₹50L,₹75L,₹1Cr'],
+  ['DP','Down payment','%',20, '10,15,20,25', '10%,15%,20%,25%'],
+  ['R','Interest rate p.a. (reducing)','%',8.5, '7.5,8,8.5,9', '7.5%,8%,8.5%,9%'],
+  ['Y','Loan tenure','years',20]
+ ],
+  v:v=>!(v.PR>0)||v.DP>=100||!(v.Y>=1)?'Enter a property price above 0, a down payment below 100% and at least 1 year.':'',
+  c:v=>{const L=v.PR*(1-v.DP/100),n=Math.round(v.Y)*12,e=emi(L,v.R,n),I=e*n-L,r=v.R/1200;
+   let bal=L,rows=[];
+   for(let m=1;m<=n;m++){
+    if(m===1 || (m-1)%12===0) rows.push([[`Year ${Math.ceil(m/12)}`,'','','',''], 'bp']);
+    const i=bal*r, p=e-i; bal-=p;
+    rows.push([[m, fm(e), fm(i), fm(p), fm(Math.max(0,bal))], '']);
+   }
+   return{
+   hero:['Monthly EMI',fm(e)],
+   kv:[['Loan amount',fm(L)],['Down payment',fm(v.PR-L)],['Total interest',fm(I)],['Total payable',fm(L+I)],['Total cost with down payment',fm(L+I+v.PR-L)]],
+   mx:{h:['Years','EMI','Interest','Total'],id:'Y',rows:Array.from({length:Math.max(30,Math.round(v.Y))},(_,i)=>i+1).map(y=>{const E=emi(L,v.R,y*12);return[y,y+' yr',fm(E),fm(E*y*12-L),fm(E*y*12)]})},
+   bk:{t:'Monthly payment break-up',h:['Month','EMI','Interest','Principal','Balance'],rows:rows},
+   text:'Home loan quote\nProperty price: '+fm(v.PR)+'\nDown payment: '+v.DP+'% ('+fm(v.PR-L)+')\nLoan: '+fm(L)+'\nRate: '+v.R+'% for '+Math.round(v.Y)+' years\nEMI: '+fm(e)+'\nTotal interest: '+fm(I)}}},
+ sip:{n:'SIP / lump sum calculator',
+  rev:{t:'Target Wealth Goal', n:'Type the final maturity amount you want to reach.', u:'₹', p:'Target value',
+   c:(v, val)=>{
+    if(!(val>0)) return '';
+    const eff_r = v.R ? Math.pow(1 + v.R/100, 1/12) - 1 : 0;
+    const n = Math.round(v.Y)*12;
+    let req = 0;
+    if(v.M==='sip'){
+      req = v.R ? val / (((Math.pow(1+eff_r, n)-1)/eff_r)*(1+eff_r)) : val / n;
+    } else {
+      req = val / Math.pow(1 + v.R/100, v.Y);
+    }
+    return `Required ${v.M==='sip'?'monthly':'lump sum'} investment: <b>₹${whole(req)}</b>`;
+   }
+  },
+  f:[
+  ['M','Investment type','',['sip','SIP (monthly)','lump','Lump sum']],
+  ['A','Amount (monthly for SIP, one-time for lump sum)','₹',10000, '5000,10000,20000,50000', '₹5k,₹10k,₹20k,₹50k'],
+  ['R','Expected return p.a.','%',12, '10,12,15,20', '10%,12%,15%,20%'],
+  ['Y','Period','years',10]
+ ],
+  v:v=>!(v.A>0)||!(v.Y>=1)?'Enter an amount above 0 and at least 1 year.':'',
+  c:v=>{
+   const eff_r = v.R ? Math.pow(1 + v.R/100, 1/12) - 1 : 0;
+   const fv=y=>v.M==='sip'?(v.R?v.A*((Math.pow(1+eff_r,y*12)-1)/eff_r)*(1+eff_r):v.A*y*12):v.A*Math.pow(1+v.R/100,y);
+   const inv=y=>v.M==='sip'?v.A*y*12:v.A;
+   const Y=Math.round(v.Y), V=fv(Y);
+   let rows=[];
+   for(let m=1;m<=Y*12;m++){
+    if(m===1 || (m-1)%12===0) rows.push([[`Year ${Math.ceil(m/12)}`,'','',''], 'bp']);
+    let val = v.M==='sip' ? (v.R ? v.A*((Math.pow(1+eff_r, m)-1)/eff_r)*(1+eff_r) : v.A*m) : v.A*Math.pow(1+v.R/100, m/12);
+    let inv_m = v.M==='sip' ? v.A*m : v.A;
+    rows.push([[m, fm(inv_m), fm(val-inv_m), fm(val)], '']);
+   }
+   return{
+   hero:['Maturity value',fm(V)],
+   kv:[['Total invested',fm(inv(Y))],['Estimated returns',fm(V-inv(Y))],['Growth',(V/inv(Y)).toFixed(2)+'x']],
+   mx:{h:['Years','Invested','Returns','Value'],id:'Y',rows:Array.from({length:Math.max(30,Math.round(v.Y))},(_,i)=>i+1).map(y=>[y,y+' yr',fm(inv(y)),fm(fv(y)-inv(y)),fm(fv(y))])},
+   bk:{t:'Monthly growth break-up',h:['Month','Invested','Returns','Value'],rows:rows},
+   note:'Estimate only. Market returns are not guaranteed. SIP assumes monthly investing at the start of each month.',
+   text:(v.M==='sip'?'SIP':'Lump sum')+' estimate\nAmount: '+fm(v.A)+(v.M==='sip'?' per month':'')+'\nReturn: '+v.R+'% p.a. for '+Y+' years\nInvested: '+fm(inv(Y))+'\nValue: '+fm(V)}}}
+};
+
+const cs=$('cs');
+cs.innerHTML='<option value="nj">EMI Calculator</option>'+Object.entries(CALCS).map(([k,c])=>`<option value="${k}">${c.n}</option>`).join('');
+
+function openCalc(k){
+ const c=CALCS[k];
+ $('ocard').innerHTML=`<div class="ch"><span class="ic">ƒ</span>${c.n}</div>`+c.f.map(([id,l,u,d,pv,pl])=>`<div class="lb"><span>${l}</span></div>`+(Array.isArray(d)?`<select data-k="${id}" style="width:100%">${d.reduce((a,x,i)=>i%2?a:a+`<option value="${x}">${d[i+1]}</option>`,'')}</select>`:`<div class="f">${u==='₹'?'<i>₹</i>':''}<input data-k="${id}" type="number" inputmode="decimal" min="0" step="any" value="${d}">${u&&u!=='₹'?'<i>'+u+'</i>':''}</div>`+(pv?`<div class="pr opr" data-f="${id}" data-v="${pv}" data-l="${pl}"></div>`:''))).join('')+'<p id="oerr" class="note" style="margin:12px 0 0;color:var(--bad)"></p>';
+ 
+ if(c.rev){
+   $('orev-wrap').style.display='block';
+   $('orev-title').textContent = c.rev.t;
+   $('orev-note').textContent = c.rev.n;
+   $('orev-u').textContent = c.rev.u;
+   $('orev-val').placeholder = c.rev.p;
+   $('orev-val').value = '';
+   $('orev-res').textContent = '';
+ } else {
+   $('orev-wrap').style.display='none';
+ }
+ 
+ document.querySelectorAll('#ocard .opr').forEach(p=>{
+  const v=p.dataset.v.split(','),l=p.dataset.l.split(',');
+  p.innerHTML=v.map((x,i)=>`<button data-x="${x}">${l[i]}</button>`).join('');
+  p.onclick=e=>{
+   const b=e.target.closest('button');
+   if(b){
+    document.querySelector(`#ocard [data-k="${p.dataset.f}"]`).value=b.dataset.x;
+    calcOther();
+   }
+  };
+ });
+ calcOther();
+}
+
+let lastOtherData = null;
+let ovtab = 'v1';
+
+function calcOther(){
+ const c=CALCS[cs.value];if(!c)return;
+ const v={};let ok=true;
+ document.querySelectorAll('#ocard [data-k]').forEach(i=>{const k=i.dataset.k;if(i.tagName==='SELECT')v[k]=i.value;else{v[k]=Number(i.value);if(i.value===''||v[k]<0)ok=false}});
+ const er=ok?c.v(v):'Fill every box with a valid number.';$('oerr').textContent=er;
+ ['ores-wrap','omx-wrap','oqt-wrap','ocmp-wrap','obk-wrap'].forEach(id=>{const el=$(id);if(el)el.style.display=er?'none':'block'});
+ 
+ document.querySelectorAll('#ocard .opr button').forEach(b=>{
+  const inp = document.querySelector(`#ocard [data-k="${b.parentNode.dataset.f}"]`);
+  if(inp) b.classList.toggle('on', Number(b.dataset.x) === Number(inp.value));
+ });
+ 
+ if(er)return;
+ 
+ const r = c.c(v); lastOtherData = r;
+ const vId = r.mx.id;
+ const selVal = Math.round(v[vId]);
+ 
+ // 1. Quick Select Pills
+ $('otc').innerHTML = r.mx.rows.map(x => `<button data-s="${x[0]}" class="${x[0]===selVal?'on':''}">${x[1]}</button>`).join('');
+ 
+ // 2. Hero Component
+ $('ohero').innerHTML=`<small>${r.hero[0]}</small><div class="big">${r.hero[1]}</div><div class="kp">${r.kv.map(x=>`<div><span>${x[0]}</span><b>${x[1]}</b></div>`).join('')}</div>`;
+ 
+ // 4. Compare Chart Component
+ drawOthViz(ovtab);
+
+ // 5. Breakup Component
+ const tb=(h,rows,cls)=>`<table class="${cls||''}"><thead><tr>${h.map((x,i)=>`<th>${x}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table>`;
+ $('obk-title').textContent = r.bk.t;
+ $('obk').innerHTML=`<div class="bkw">${tb(r.bk.h,r.bk.rows.map(([x,cl])=>`<tr class="${cl||''}">${x.map(y=>`<td>${y}</td>`).join('')}</tr>`).join(''))}</div>`;
+ if(r.note) $('obnote').textContent = r.note; else $('obnote').textContent = '';
+
+ // 6. Matrix Component
+ const maxVal = Math.max(...r.mx.rows.map(x => Number(String(x[2]).replace(/[^0-9.-]+/g,"")) || 1));
+ const mxRows = r.mx.rows.map(x => {
+     const numVal = Number(String(x[2]).replace(/[^0-9.-]+/g,"")) || 0;
+     const pct = Math.max(4, Math.sqrt(numVal/maxVal)*100);
+     const cell2 = `${x[2]}<div class="mb" style="width:${pct}%"></div>`;
+     return `<tr data-s="${x[0]}" class="${x[0]===selVal?'on':''}">
+         <td>${x[1]}</td><td>${cell2}</td>${x.slice(3).map(y=>`<td>${y}</td>`).join('')}
+     </tr>`;
+ });
+ $('omx').innerHTML=`<div class="ch"><span class="ic">≣</span>${vId==='N'?'Tenure matrix':vId==='Y'?'Years matrix':'Matrix'}</div><p class="note">Tap a row to use that period.</p>`+tb(r.mx.h,mxRows.join(''),'mxt');
+ $('omx').dataset.id=vId;
+
+ // 7. Quote Component
+ let qtHtml = `<div class="qh"><span>${c.n} quote</span><span>${selVal} ${vId==='Y'?'years':'months'}</span></div>`;
+ qtHtml += `<div class="qe"><div><small>${r.hero[0]}</small><b>${r.hero[1]}</b></div></div>`;
+ qtHtml += r.kv.map(x=>`<div class="qr"><span>${x[0]}</span><b>${x[1]}</b></div>`).join('');
+ $('oqt').innerHTML = qtHtml;
+ $('oqw').onclick=()=>sendWA('oqphone', r.text);
+ $('oqc').onclick=()=>{cp(r.text, 'oqm');};
+ $('oqh').onclick=()=>shareT(r.text);
+
+ // 8. Compare Options Component
+ if(r.mx.rows.length > 1){
+    $('ocmp-body').style.display='block';
+    $('ocmp-err').style.display='none';
+    const opts = r.mx.rows.map(x => `<option value="${x[0]}">${x[1]}</option>`).join('');
+    if($('oca').dataset.calc !== cs.value){
+      $('oca').innerHTML = opts; $('ocb').innerHTML = opts;
+      $('oca').dataset.calc = cs.value;
+      $('oca').selectedIndex = 0; $('ocb').selectedIndex = Math.min(1, r.mx.rows.length - 1);
+    }
+    ocmp();
+ } else {
+    $('ocmp-body').style.display='none';
+    $('ocmp-err').style.display='block';
+ }
+ 
+ if($('orev-val').value) runRev();
+}
+
+function drawOthViz(tab = 'v1'){
+ ovtab = tab;
+ const r = lastOtherData;
+ if(!r) return;
+ const vId = r.mx.id;
+ const selVal = Math.round(Number(document.querySelector(`#ocard [data-k="${vId}"]`).value));
+ const idx = tab==='v1'?2:tab==='v2'?3:4;
+ const mxVal = Math.max(...r.mx.rows.map(x => Number(String(x[idx]).replace(/[^0-9.-]+/g,"")) || 1));
+
+ const rows = r.mx.rows.map(x => {
+     const on = x[0] === selVal;
+     const val = String(x[idx]);
+     const num = Number(val.replace(/[^0-9.-]+/g,"")) || 0;
+     let w = Math.max(3, (num/mxVal)*100);
+     if(tab==='v1' && (r.mx.h[1]==='EMI' || r.mx.h[1]==='Invested')) w = Math.max(3, Math.sqrt(num/mxVal)*100);
+     const tr = `<i style="width:${w}%;background:${on?'var(--gold)':'var(--acc)'}"></i>`;
+     return `<button class="vr ${on?'on':''}" data-s="${x[0]}"><span class="t">${x[1]}</span><span class="tr">${tr}</span><span class="v">${val}</span></button>`;
+ }).join('');
+
+ $('oviz').innerHTML = `<div class="ch"><span class="ic">▥</span>Compare ${vId==='Y'?'years':'tenures'}</div>
+ <div class="vt">
+     <button data-ovt="v1" class="${tab==='v1'?'on':''}">${r.mx.h[1]}</button>
+     <button data-ovt="v2" class="${tab==='v2'?'on':''}">${r.mx.h[2]}</button>
+     <button data-ovt="v3" class="${tab==='v3'?'on':''}">${r.mx.h[3]}</button>
+ </div>
+ ${rows}`;
+}
+
+$('otc').addEventListener('click', e => {
+ const b = e.target.closest('button[data-s]');
+ if(b){ document.querySelector(`#ocard [data-k="${lastOtherData.mx.id}"]`).value = b.dataset.s; calcOther(); }
+});
+
+$('oviz').addEventListener('click', e => {
+ const t = e.target.closest('[data-ovt]');
+ const s = e.target.closest('.vr[data-s]');
+ if(t){ drawOthViz(t.dataset.ovt); }
+ else if(s){ document.querySelector(`#ocard [data-k="${lastOtherData.mx.id}"]`).value = s.dataset.s; calcOther(); }
+});
+
+function ocmp(){
+ if(!lastOtherData || !$('oca') || !$('ocb') || $('oca').options.length === 0) return;
+ const aVal = $('oca').value, bVal = $('ocb').value;
+ const aRow = lastOtherData.mx.rows.find(x => String(x[0]) === String(aVal));
+ const bRow = lastOtherData.mx.rows.find(x => String(x[0]) === String(bVal));
+ if(!aRow || !bRow) return;
+ 
+ let html = '<table><thead><tr><th></th><th>'+aRow[1]+'</th><th>'+bRow[1]+'</th></tr></thead><tbody>';
+ for(let i=2; i<lastOtherData.mx.h.length; i++){
+     html += `<tr><td>${lastOtherData.mx.h[i]}</td><td>${aRow[i]}</td><td>${bRow[i]}</td></tr>`;
+ }
+ html += '</tbody></table>';
+ $('ocr').innerHTML = html;
+ 
+ const aInt = num(aRow[3]), bInt = num(bRow[3]);
+ const aTot = num(aRow[4]), bTot = num(bRow[4]);
+ const aEmi = num(aRow[2]), bEmi = num(bRow[2]);
+ 
+ const s = num(aVal) < num(bVal) ? {y:aRow[1], emi:aEmi, p:aTot-aInt, i:aInt, v:aTot} : {y:bRow[1], emi:bEmi, p:bTot-bInt, i:bInt, v:bTot};
+ const l = num(aVal) < num(bVal) ? {y:bRow[1], emi:bEmi, p:bTot-bInt, i:bInt, v:bTot} : {y:aRow[1], emi:aEmi, p:aTot-aInt, i:aInt, v:aTot};
+
+ let lbl1, lbl2, unit;
+ if(cs.value === 'hl'){
+    lbl1 = 'Principal'; lbl2 = 'Interest'; unit = 'total paid';
+    $('oc-ins').innerHTML=`Choosing <b>${s.y}</b> over ${l.y} saves you <b>₹${whole(l.i-s.i)}</b> in total interest, but requires a <b>₹${whole(s.emi-l.emi)}</b> higher monthly EMI.`;
+    cmpShareTxt = `Comparison Quote\n${s.y}: EMI ₹${whole(s.emi)}, Total Interest ₹${whole(s.i)}\n${l.y}: EMI ₹${whole(l.emi)}, Total Interest ₹${whole(l.i)}\n\nInsight: Choosing ${s.y} saves you ₹${whole(l.i-s.i)} in total interest, but increases EMI by ₹${whole(s.emi-l.emi)}.`;
+ } else {
+    lbl1 = 'Invested'; lbl2 = 'Returns'; unit = 'maturity';
+    $('oc-ins').innerHTML=`Investing for <b>${l.y}</b> instead of ${s.y} yields <b>₹${whole(l.i-s.i)}</b> more in returns, requiring <b>₹${whole(l.p-s.p)}</b> more in contributions.`;
+    cmpShareTxt = `Comparison Quote\n${s.y}: Invested ₹${whole(s.p)}, Maturity ₹${whole(s.v)}\n${l.y}: Invested ₹${whole(l.p)}, Maturity ₹${whole(l.v)}\n\nInsight: Investing for ${l.y} yields ₹${whole(l.i-s.i)} more in returns, requiring ₹${whole(l.p-s.p)} more in contributions.`;
+ }
+ 
+ $('oc-sb').innerHTML = sbar(s.y, s.p, s.i, unit) + sbar(l.y, l.p, l.i, unit) + `<div class="vl" style="justify-content:center;margin-top:12px;font-weight:600"><span><i style="background:var(--acc)"></i>${lbl1}</span><span><i style="background:var(--gold)"></i>${lbl2}</span></div>`;
+}
+
+function runRev(){
+ const c=CALCS[cs.value]; if(!c || !c.rev) return;
+ const val = Number($('orev-val').value);
+ const v={};
+ document.querySelectorAll('#ocard [data-k]').forEach(i=>{const k=i.dataset.k; v[k]=i.tagName==='SELECT'?i.value:Number(i.value)});
+ const res = c.rev.c(v, val);
+ $('orev-res').style.display = res ? 'block' : 'none';
+ $('orev-res').innerHTML = res;
+}
+$('orev-val').addEventListener('input', runRev);
+$('oc-sh').onclick=()=>cp(cmpShareTxt, 'oc-sh-m');
+
+cs.onchange=()=>{
+ const nj=cs.value==='nj';
+ document.body.dataset.calc = nj ? 'nj' : 'oth';
+ $('hsub').textContent = nj ? 'Exact monthly EMI solved to target NJC IRR' : ({hl:'Home loan EMI with down payment and year-wise break-up',sip:'SIP or lump sum growth, returns as CAGR'}[cs.value]||'');
+ if(!nj) openCalc(cs.value);
+ window.scrollTo(0,0);
+};
+
+$('ocard').addEventListener('input',calcOther);$('ocard').addEventListener('change',calcOther);
+$('omx').addEventListener('click',e=>{const t=e.target.closest('tr[data-s]');if(t){document.querySelector(`#ocard [data-k="${$('omx').dataset.id}"]`).value=t.dataset.s;calcOther()}});
+$('oca').onchange=$('ocb').onchange=ocmp;
+
+/* chart tabs for the NJ calculator */
+let vtab='emi';
+function drawViz(){
+ const x=cur(),P=Number($('amount').value);
+ const mx=Math.max(...data.map(d=>vtab==='emi'?d.emiRounded:vtab==='rate'?d.rate:d.total))||1,Pp=P;
+ const row=d=>{const on=d.months===sel,int=Math.max(0,d.total-Pp);let tr,val;
+  if(vtab==='split'){const w=d.total/mx*100,pw=Pp/d.total*w;tr=`<i style="width:${pw}%;background:var(--acc)"></i><i style="width:${w-pw}%;background:var(--gold)"></i>`;val=Math.round(int/d.total*100)+'% int.'}
+  else{const w=vtab==='emi'?Math.sqrt(d.emiRounded/mx)*100:d.rate/mx*100;tr=`<i style="width:${Math.max(3,w)}%;background:${on?'var(--gold)':'var(--acc)'}"></i>`;val=vtab==='emi'?'₹'+whole(d.emiRounded):p2(d.rate)}
+  return `<button class="vr ${on?'on':''}" data-m="${d.months}"><span class="t">${d.months} mo</span><span class="tr">${tr}</span><span class="v">${val}</span></button>`};
+ $('viz').innerHTML=`<div class="ch"><span class="ic">▥</span>Compare tenures</div><div class="vt">${[['emi','EMI'],['rate','Interest'],['split','Split']].map(t=>`<button data-vt="${t[0]}" class="${t[0]===vtab?'on':''}">${t[1]}</button>`).join('')}</div>`+
+  (vtab==='split'?'<div class="vl"><span><i style="background:var(--acc)"></i>Loan</span><span><i style="background:var(--gold)"></i>Interest</span></div>':vtab==='emi'?'<p class="note">Bar length uses a square-root scale so small EMIs stay visible.</p>':'<p class="note">Customer interest rate p.a. for each tenure.</p>')+data.map(row).join('');
+}
+$('viz').addEventListener('click',e=>{const t=e.target.closest('[data-vt]'),r=e.target.closest('[data-m]');if(t){vtab=t.dataset.vt;drawViz()}else if(r){sel=+r.dataset.m;render()}});
 list();calculate();
 </script>
 </body>
